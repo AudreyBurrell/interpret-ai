@@ -19,9 +19,9 @@
 html,body{margin:0;height:100%}
 body{background:var(--bg);font-family:var(--sans);color:var(--ink);display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}
 button{font:inherit;color:inherit;cursor:pointer}
-.phone{width:390px;height:844px;max-height:calc(100vh - 48px);background:var(--surface);border-radius:44px;box-shadow:0 0 0 10px #1d1a18,0 30px 60px rgba(0,0,0,.25);position:relative;overflow:hidden;display:flex;flex-direction:column}
+.phone{width:390px;height:844px;max-height:calc(100vh - 48px);background:var(--surface);border-radius:44px;box-shadow:0 0 0 10px #1d1a18,0 30px 60px rgba(0,0,0,.25);position:relative;overflow:hidden;display:flex;flex-direction:column;padding-top:20px}
 @media (max-width:500px){body{padding:0}.phone{width:100%;height:100vh;max-height:none;border-radius:0;box-shadow:none}}
-.status{height:44px;flex:none;display:flex;justify-content:space-between;align-items:center;padding:0 28px;font-size:14px;font-weight:600}
+
 .screen{flex:1;display:none;flex-direction:column;min-height:0}
 .screen.on{display:flex}
 .scroll{flex:1;overflow-y:auto;min-height:0}
@@ -190,7 +190,6 @@ h1,h2,h3{font-family:var(--serif);margin:0}
 </head>
 <body>
 <div class="phone" id="phone">
-  <div class="status" aria-hidden="true"><span>9:41</span><span>●●● ▮</span></div>
 
   <!-- HOME -->
   <section class="screen on" id="s-home" aria-label="Home">
