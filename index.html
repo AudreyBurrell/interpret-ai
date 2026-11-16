@@ -234,6 +234,10 @@ h1,h2,h3{font-family:var(--serif);margin:0}
 .tips .icon{color:var(--accent);margin-top:1px}
 .tips b{display:block}
 .tips small{color:var(--muted);font-size:13.5px}
+.doc.fuzzy .hl,.zoom.fuzzy{color:transparent;text-shadow:0 0 5px rgba(58,44,31,.95)}
+.blurnote{display:flex;gap:10px;background:var(--med-soft);border:1.5px solid #ecd28c;border-radius:14px;padding:12px 14px;font-size:14.5px;line-height:1.4;margin-bottom:12px}
+.blurnote .icon{color:var(--med);margin-top:2px}
+.blurnote b{display:block;color:#6a4900;margin-bottom:2px}
 .note{font-size:13px;color:var(--muted);text-align:center;margin-top:2px}
 </style>
 </head>
@@ -471,9 +475,44 @@ DOCS.journal = {
 };
 DOCS.recipe = {
   title:"Apple cake recipe card", lang:"English", code:"en", font:"letter",
-  meta:"English · handwritten recipe card", thumb:"#f1e4c9", unreadable:true,
-  pages:[{lines:["Grandma's Apple Cake","2 cups flour, 1 cup sugar","1 tsp cinnamon, pinch of salt","3 apples, peeled and sliced","Bake at 350 for 45 minutes"],paras:[0]}],
-  unc:{}
+  meta:"English · handwritten recipe card", thumb:"#f1e4c9", blurryPhoto:true,
+  pages:[{lines:[
+    "Grandma's Apple [cake]",
+    "[n2] cups flour, 1 cup [sugar]",
+    "1 [tsp] cinnamon, pinch of [salt]",
+    "[n3] apples, peeled and sliced",
+    "Bake at [temp] for [mins] minutes"
+  ],paras:[0,1,2,3,4]}],
+  unc:{
+    cake:{ink:"Cake",why:"The photo is blurry here. The word's shape fits several words, but “Apple Cake” is the most common pairing.",
+      alts:[{t:"Cake",p:.52},{t:"Coke",p:.28},{t:"Cafe",p:.20}]},
+    n2:{ink:"2",why:"Numbers blur together easily. Most cakes use 2–3 cups of flour, so your own sense of the recipe may help.",
+      alts:[{t:"2",p:.45},{t:"3",p:.35},{t:"7",p:.20}]},
+    sugar:{ink:"sugar",why:"Only the first and last letters are visible through the blur.",
+      alts:[{t:"sugar",p:.55},{t:"super",p:.25},{t:"sage",p:.20}]},
+    tsp:{ink:"tbsp",why:"I can't tell if there's a “b” in this abbreviation. Teaspoon and tablespoon are 3× apart, so check carefully.",
+      alts:[{t:"tsp",p:.50},{t:"tbsp",p:.38},{t:"cup",p:.12}]},
+    salt:{ink:"salt",why:"The first letter is lost in the blur.",
+      alts:[{t:"salt",p:.48},{t:"malt",p:.30},{t:"soft",p:.22}]},
+    n3:{ink:"3",why:"The number's curves are blurred. It could be a 3, 5 or 8.",
+      alts:[{t:"3",p:.44},{t:"5",p:.36},{t:"8",p:.20}]},
+    temp:{ink:"350",why:"The middle digit is unclear. 350°F is the most common baking temperature.",
+      alts:[{t:"350",p:.47},{t:"330",p:.30},{t:"380",p:.23}]},
+    mins:{ink:"45",why:"The first digit is unclear. Baking time matters, so check this if you can.",
+      alts:[{t:"45",p:.41},{t:"25",p:.34},{t:"15",p:.25}]}
+  },
+  trans:{de:{
+    pages:["Omas Apfel{cake}\n{n2} Tassen Mehl, 1 Tasse {sugar}\n1 {tsp} Zimt, eine Prise {salt}\n{n3} Äpfel, geschält und in Scheiben geschnitten\nBei {temp} {mins} Minuten backen"],
+    w:{
+      cake:[["kuchen","Omas Apfel<b>kuchen</b>"],["-Cola","Omas Apfel<b>-Cola</b> (ergibt kaum Sinn)"],["-Café","Omas Apfel<b>-Café</b> (ein Lokal, kein Rezept)"]],
+      n2:[["2","<b>2</b> Tassen Mehl"],["3","<b>3</b> Tassen Mehl"],["7","<b>7</b> Tassen Mehl (sehr viel)"]],
+      sugar:[["Zucker","1 Tasse <b>Zucker</b>"],["super","1 Tasse <b>super</b> (ergibt keinen Sinn)"],["Salbei","1 Tasse <b>Salbei</b>"]],
+      tsp:[["Teelöffel","1 <b>Teelöffel</b> Zimt"],["Esslöffel","1 <b>Esslöffel</b> Zimt"],["Tasse","1 <b>Tasse</b> Zimt (sehr viel)"]],
+      salt:[["Salz","eine Prise <b>Salz</b>"],["Malz","eine Prise <b>Malz</b>"],["weich","eine Prise <b>weich</b> (ergibt keinen Sinn)"]],
+      n3:[["3","<b>3</b> Äpfel"],["5","<b>5</b> Äpfel"],["8","<b>8</b> Äpfel"]],
+      temp:[["350 °F","Bei <b>350 °F</b> (ca. 175 °C) backen"],["330 °F","Bei <b>330 °F</b> (ca. 165 °C) backen"],["380 °F","Bei <b>380 °F</b> (ca. 195 °C) backen"]],
+      mins:[["45","<b>45</b> Minuten backen"],["25","<b>25</b> Minuten backen"],["15","<b>15</b> Minuten backen"]]
+    }}}
 };
 DOCS.letter.meta="English cursive · 1958 · family letter";
 DOCS.record.meta="German · 1891 · family history"; DOCS.record.thumb="#ecdfc2";
@@ -532,7 +571,7 @@ function renderHome(){
     const pills=[];
     if(needsTr(d)) pills.push(`Will translate to ${LANGS[userLang].name}`);
     if(d.pages.length>1) pills.push(`${d.pages.length} pages`);
-    if(d.unreadable) pills.push("Blurry photo");
+    if(d.blurryPhoto) pills.push("Blurry photo");
     if(!pills.length) pills.push("Messy handwriting");
     const lines=[12,22,32,42,52,62].map((t,i)=>`<span style="top:${t}px;${i%3===1?'right:20px':''}"></span>`).join("");
     const stack=d.pages.length>1?"box-shadow:3px 3px 0 #e6d8bb,6px 6px 0 #ddcda9,inset 0 0 12px rgba(120,90,40,.25)":"";
@@ -589,8 +628,12 @@ function start(k){
   state={}; edits={}; tab="orig";
   tokens.filter(t=>t.unc).forEach(t=>state[t.id]={text:doc.unc[t.id].alts[0].t,done:false,how:null});
   scan(0,false);
-  if(doc.unreadable){
-    runSteps("Reading your document…",["Finding lines of text",{label:"Checking photo quality",warn:"Photo is too blurry"}],()=>{ scan(0,true); showUnreadable(); });
+  if(doc.blurryPhoto){
+    scan(0,true);
+    runSteps("Reading your document…",["Finding lines of text",{label:"Checking photo quality",warn:"Photo is blurry · reading it anyway"},...readSteps()],()=>{
+      $("#proc-title").textContent=`Done. Treat this as a best guess.`;
+      setTimeout(openReview,1000);
+    });
   } else if(doc.blurry!=null){
     const n=doc.pages.length;
     runSteps("Reading your document…",[`Finding pages · ${n} found`,{label:"Checking photo quality",warn:`Page ${doc.blurry+1} is too blurry`}],()=>{ scan(doc.blurry,true); showError(); });
@@ -600,29 +643,6 @@ function start(k){
       setTimeout(openReview,900);
     });
   }
-}
-
-/* ---------- Error: whole photo too blurry ---------- */
-function showUnreadable(){
-  $("#err-title").textContent=doc.title;
-  const tip=(d,t,s)=>`<li><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${d}</svg><div><b>${t}</b><small>${s}</small></div></li>`;
-  $("#err").innerHTML=`
-    <div class="warnicon" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17v.5"/></svg></div>
-    <h2>This photo is too blurry to read</h2>
-    <p class="sub">The letters run together, so I can't transcribe it. If I guessed, I'd likely be wrong without knowing it, so I'd rather not give you a transcription you can't trust.</p>
-    <div class="blurprev" aria-hidden="true" style="font-family:'Cedarville Cursive',cursive;font-size:19px">${doc.pages[0].lines.map(l=>`<div>${esc(l)}</div>`).join("")}</div>
-    <p class="zcap" style="margin:0">Your photo</p>
-    <p class="sec-label" style="margin:18px 0 0">For a clearer photo</p>
-    <ul class="tips" aria-label="Tips for a clearer photo" style="margin-top:4px">
-      ${tip('<path d="M7 11V7a2 2 0 014 0v4M11 9V6a2 2 0 014 0v5M15 9a2 2 0 014 0v4a7 7 0 01-7 7h-1a6 6 0 01-5-3l-2-4a2 2 0 013-2l1 2"/>',"Hold your phone steady","Rest your elbows on the table and wait for it to focus.")}
-      ${tip('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/>',"Use bright, even light","Near a window works well. Avoid your phone's shadow.")}
-      ${tip('<rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M9 8h6M9 12h6M9 16h4"/>',"Lay the page flat","Fill the screen with the page so the letters are bigger.")}
-    </ul>`;
-  $("#err-retake").textContent="Choose a different photo";
-  $("#err-retake").onclick=()=>show("s-home");
-  $("#err-skip").hidden=true; $("#err-note").hidden=true;
-  $("#err-back").onclick=()=>show("s-home");
-  show("s-error");
 }
 
 /* ---------- Error: blurry page ---------- */
@@ -696,14 +716,14 @@ function renderDoc(){
   const d=$("#doc"), lines={};
   tokens.filter(t=>t.page===curPage).forEach(t=>(lines[t.line]??=[]).push(t));
   const ok=readable(curPage);
-  d.classList.toggle("blurry",!ok);
+  d.classList.toggle("blurry",!ok); d.classList.toggle("fuzzy",!!doc.blurryPhoto);
   d.innerHTML=Object.values(lines).map(ts=>`<div class="hl ${doc.font}">`+ts.map(t=>{
     if(!ok) return esc(t.unc? t.pre+doc.unc[t.id].ink+t.suf : t.text);
     if(t.unc) return `${esc(t.pre)}<span class="dw unc ${level(t.id)} ${state[t.id].done?'done':''}" data-id="${t.id}">${esc(doc.unc[t.id].ink)}</span>${esc(t.suf)}`;
     return `<span class="dw" data-id="${t.id}">${esc(t.text)}</span>`;
   }).join(" ")+`</div>`).join("");
   $("#blurmsg").innerHTML= ok? "" : `<div class="blurmsg" role="group" aria-label="Page ${curPage+1} problem"><b>This photo is too blurry to read</b><button class="btn primary" data-retake>Retake page ${curPage+1}</button></div>`;
-  $("#docbar-t").textContent= ok? (multi()?`Your photo of page ${curPage+1} · tap a word`:"Your photo · tap a word to check it") : `Page ${curPage+1} wasn't transcribed`;
+  $("#docbar-t").textContent= doc.blurryPhoto? "Your photo (blurry) · tap a word" : ok? (multi()?`Your photo of page ${curPage+1} · tap a word`:"Your photo · tap a word to check it") : `Page ${curPage+1} wasn't transcribed`;
   $$("#doc .dw").forEach(s=>s.onclick=()=>openWord(s.dataset.id));
   $$("[data-retake]").forEach(b=>b.onclick=()=>retake(false));
 }
@@ -736,6 +756,7 @@ function renderTx(){
       html+=`<p lang="${doc.code}">`+h+"</p>";
     });
   }
+  if(doc.blurryPhoto) html=`<div class="blurnote" role="note"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17v.5"/></svg><div><b>Your photo is blurry, so this is my best guess</b>Many words may be wrong. Check numbers and amounts carefully. If you can take a clearer photo, that will work better.</div></div>`+html;
   tx.innerHTML=html;
   $$("#tx .w").forEach(b=>b.onclick=()=>openWord(b.dataset.id));
   $$("#tx [data-retake]").forEach(b=>b.onclick=()=>retake(false));
@@ -756,6 +777,11 @@ function updateProgress(){
   } else {
     bb.innerHTML=`<button class="btn primary" id="finbtn">Finish transcription</button>`;
     $("#finbtn").onclick=finish;
+  }
+  if(doc.blurryPhoto){
+    bb.classList.add("two");
+    bb.insertAdjacentHTML("beforeend",`<button class="btn ghost" id="diffphoto">Choose a different photo</button>`);
+    $("#diffphoto").onclick=()=>show("s-home");
   }
 }
 $$("#tabs button").forEach(b=>b.onclick=()=>{
@@ -795,7 +821,7 @@ function zoomHTML(id){
   const same=t2=>t2&&t2.page===t.page&&t2.line===t.line;
   const prev=same(tokens[i-1])?ink(tokens[i-1]):"", next=same(tokens[i+1])?ink(tokens[i+1]):"";
   const mid=t.unc? `${esc(t.pre)}<span class="z">${esc(doc.unc[id].ink)}</span>${esc(t.suf)}` : `<span class="z">${esc(t.text)}</span>`;
-  return `<div class="zoom f-${doc.font}" aria-hidden="true"><span class="ctx">${esc(prev)}</span> ${mid} <span class="ctx">${esc(next)}</span></div><p class="zcap">Zoomed in from your photo, ${multi()?`page ${t.page+1}, `:""}line ${t.line+1}</p>`;
+  return `<div class="zoom f-${doc.font} ${doc.blurryPhoto?'fuzzy':''}" aria-hidden="true"><span class="ctx">${esc(prev)}</span> ${mid} <span class="ctx">${esc(next)}</span></div><p class="zcap">Zoomed in from your photo, ${multi()?`page ${t.page+1}, `:""}line ${t.line+1}</p>`;
 }
 
 function openWord(id){
@@ -880,7 +906,7 @@ function finish(){
   $("#fin").innerHTML=`
     <div class="ok"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 12.5l4.5 4.5L19 7"/></svg></div>
     <h2>Nice work</h2>
-    <p class="sub">${miss?`You checked every word I could read. Page ${doc.blurry+1} is still missing.`:"You checked every word I was unsure about."}</p>
+    <p class="sub">${doc.blurryPhoto?"Made from a blurry photo. Double-check amounts before you rely on it.":miss?`You checked every word I could read. Page ${doc.blurry+1} is still missing.`:"You checked every word I was unsure about."}</p>
     ${miss?`<div class="skipcard" style="margin-bottom:16px"><b>Page ${doc.blurry+1} isn't included</b>The photo was too blurry. Retake it to add it to this transcription.<button class="btn primary" id="fin-retake">Retake page ${doc.blurry+1}</button></div>`:""}
     <div class="stats">
       <div><b>${c.kept}</b><small>AI guesses you confirmed</small></div>
