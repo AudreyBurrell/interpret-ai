@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Interpret AI — Prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Cedarville+Cursive&family=Pinyon+Script&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Cedarville+Cursive&family=Pinyon+Script&family=Homemade+Apple&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#ece6db; --surface:#fffdf9; --paper:#f3e9d2; --ink:#2a2420; --muted:#6d625a; --line:#e2d9cb;
@@ -186,6 +186,55 @@ h1,h2,h3{font-family:var(--serif);margin:0}
 .card .hd button{border:0;background:var(--accent-soft);color:var(--accent);font-weight:600;font-size:13.5px;border-radius:9px;padding:6px 12px}
 .card p{margin:0 0 6px;line-height:1.55;font-size:15.5px;white-space:pre-wrap}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+.doc.f-journal{font-family:'Homemade Apple',cursive;font-size:17px}
+.doc .hl.journal{line-height:2}
+.zoom.f-journal{font-family:'Homemade Apple',cursive;font-size:24px}
+.steps li.warn{color:var(--low);font-weight:600}
+.steps li.warn .dot{background:var(--low);border-color:var(--low);color:#fff;font-weight:700;font-size:13px}
+
+/* pages */
+.pages{display:flex;gap:6px;margin-bottom:8px;overflow-x:auto}
+.pages button{border:0;background:rgba(255,255,255,.5);border-radius:9px;padding:6px 10px;font-size:13px;font-weight:600;color:#4d4033;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.pages button[aria-pressed=true]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.pages .st{font-weight:700;font-size:11.5px;padding:1px 6px;border-radius:999px}
+.pages .st.todo{background:var(--med-soft);color:var(--med)}
+.pages .st.ok{background:var(--ok-soft);color:var(--ok)}
+.pages .st.bad{background:var(--low-soft);color:var(--low)}
+.docstage{position:relative}
+.doc.blurry .hl{filter:blur(2.6px);opacity:.85}
+.blurmsg{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:16px;background:rgba(243,233,210,.55);border-radius:6px}
+.blurmsg b{font-size:15.5px}
+.blurmsg .btn{width:auto;padding:10px 16px;font-size:15px}
+.pghead{font-family:var(--sans);font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:14px 0 2px;display:flex;align-items:center;gap:8px}
+.pghead:first-child{margin-top:0}
+.pghead::after{content:"";flex:1;height:1px;background:var(--line)}
+.skipcard{border:1.5px dashed #e0b4a8;background:var(--low-soft);border-radius:14px;padding:12px 14px;line-height:1.4;font-size:15px;margin:4px 0}
+.skipcard b{display:block;color:#7d2817;margin-bottom:2px}
+.skipcard .btn{margin-top:10px;padding:10px;font-size:15px}
+.bottombar.two{flex-direction:column;gap:8px}
+
+/* error */
+.err{padding:4px 22px 20px}
+.err .warnicon{width:56px;height:56px;border-radius:50%;background:var(--low-soft);color:var(--low);display:grid;place-items:center;margin:6px auto 12px}
+.err h2{text-align:center;font-size:22px;line-height:1.25}
+.err .sub{text-align:center;color:var(--muted);margin:8px 0 16px;line-height:1.45}
+.strip{display:flex;justify-content:center;gap:12px;margin-bottom:16px}
+.strip figure{margin:0;text-align:center;font-size:12.5px;font-weight:600;color:var(--muted)}
+.strip .pg{width:62px;height:80px;border-radius:7px;background:var(--paper);position:relative;overflow:hidden;box-shadow:inset 0 0 10px rgba(120,90,40,.25);margin-bottom:5px;border:2px solid transparent}
+.strip .pg span{position:absolute;left:7px;right:7px;height:2px;background:#6b5a46;opacity:.45;border-radius:2px}
+.strip .bad .pg{border-color:var(--low)}
+.strip .bad .pg span{filter:blur(2px);height:4px}
+.strip .bad{color:var(--low)}
+.blurprev{background:var(--paper);border-radius:12px;padding:16px 18px;box-shadow:inset 0 0 18px rgba(120,90,40,.2);font-family:'Homemade Apple',cursive;font-size:15px;line-height:2;color:#3a2c1f;overflow:hidden;white-space:nowrap;margin-bottom:6px}
+.blurprev div{filter:blur(2.6px)}
+.tips{list-style:none;padding:0;margin:16px 0 0}
+.tips li{display:flex;gap:12px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--line);font-size:15px;line-height:1.4}
+.tips li:first-child{border-top:0}
+.tips .icon{color:var(--accent);margin-top:1px}
+.tips b{display:block}
+.tips small{color:var(--muted);font-size:13.5px}
+.note{font-size:13px;color:var(--muted);text-align:center;margin-top:2px}
 </style>
 </head>
 <body>
@@ -205,23 +254,30 @@ h1,h2,h3{font-family:var(--serif);margin:0}
         <button data-pick><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4M7 9l5-5 5 5M4 16v4h16v-4"/></svg>Upload image</button>
       </div>
       <p class="sec-label">Sample documents</p>
-      <button class="sample" data-doc="letter">
-        <div class="thumb" aria-hidden="true"><span style="top:12px;right:20px"></span><span style="top:22px"></span><span style="top:32px"></span><span style="top:42px;right:14px"></span><span style="top:52px"></span><span style="top:62px;right:26px"></span></div>
-        <div><b>Letter to Margaret</b><small>English cursive · 1958 · family letter</small><span class="pill" data-pill="letter"></span></div>
-      </button>
-      <button class="sample" data-doc="record">
-        <div class="thumb" aria-hidden="true" style="background:#ecdfc2"><span style="top:12px"></span><span style="top:22px;right:18px"></span><span style="top:32px"></span><span style="top:42px"></span><span style="top:52px;right:30px"></span><span style="top:62px"></span></div>
-        <div><b>Baptism record, Kirchberg</b><small>German · 1891 · family history</small><span class="pill" data-pill="record"></span></div>
-      </button>
+      <div id="samples"></div>
     </div></div>
   </section>
 
   <!-- PROCESSING -->
   <section class="screen" id="s-proc" aria-label="Transcribing">
     <div class="proc">
-      <div class="scanbox" id="scanbox" aria-hidden="true"><div class="scanline"></div></div>
+      <div class="scanbox" id="scanbox" aria-hidden="true"></div>
       <h2 id="proc-title" aria-live="polite">Reading your document…</h2>
       <ul class="steps" id="steps"></ul>
+    </div>
+  </section>
+
+  <!-- ERROR: BLURRY PAGE -->
+  <section class="screen" id="s-error" aria-label="Photo problem">
+    <div class="topbar">
+      <button class="iconbtn" id="err-back" aria-label="Back to home"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <div class="t"><b id="err-title"></b></div>
+    </div>
+    <div class="scroll"><div class="err" id="err"></div></div>
+    <div class="bottombar two">
+      <button class="btn primary" id="err-retake"></button>
+      <button class="btn ghost" id="err-skip"></button>
+      <p class="note" id="err-note"></p>
     </div>
   </section>
 
@@ -233,15 +289,16 @@ h1,h2,h3{font-family:var(--serif);margin:0}
     </div>
     <div class="scroll" id="rv-scroll">
       <div class="docwrap" id="docwrap">
-        <div class="doc" id="doc" aria-label="Photo of your document. Outlined words are ones I'm unsure about."></div>
-        <div class="docbar"><span>Your photo · tap a word to check it</span><button id="docsize" aria-expanded="false">Expand</button></div>
+        <div class="pages" id="pages" aria-label="Pages" hidden></div>
+        <div class="docstage"><div class="doc" id="doc" aria-label="Photo of your document. Outlined words are ones I'm unsure about."></div><div id="blurmsg"></div></div>
+        <div class="docbar"><span id="docbar-t">Your photo · tap a word to check it</span><button id="docsize" aria-expanded="false">Expand</button></div>
       </div>
       <div class="legend" aria-label="Legend">
         <span><svg width="22" height="8" viewBox="0 0 22 8" aria-hidden="true"><path d="M1 4q2.5-4 5 0t5 0 5 0 5 0" fill="none" stroke="#b4462f" stroke-width="2"/></svg>Not sure</span><span><i class="sw med"></i>Fairly sure</span><span><i class="sw ok"></i>You reviewed</span>
       </div>
       <div class="tabs" id="tabs" role="tablist" hidden>
-        <button role="tab" aria-selected="true" data-tab="orig" id="tab-orig">German (original)</button>
-        <button role="tab" aria-selected="false" data-tab="tr">English translation</button>
+        <button role="tab" aria-selected="true" data-tab="orig"></button>
+        <button role="tab" aria-selected="false" data-tab="tr"></button>
       </div>
       <div class="trnote" id="trnote" hidden>
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>
@@ -249,9 +306,7 @@ h1,h2,h3{font-family:var(--serif);margin:0}
       </div>
       <div class="tx" id="tx"></div>
     </div>
-    <div class="bottombar">
-      <button class="btn primary" id="nextbtn"></button>
-    </div>
+    <div class="bottombar" id="rv-bottom"></div>
   </section>
 
   <!-- FINISH -->
@@ -272,7 +327,6 @@ h1,h2,h3{font-family:var(--serif);margin:0}
   </div>
   <div class="toast" id="toast" role="status"></div>
 </div>
-
 <script>
 /* ---------- Sample data (simulated AI output) ---------- */
 const DOCS = {
@@ -350,50 +404,139 @@ const DOCS = {
   }
 };
 
-(()=>{ const r=DOCS.record, w={}; for(const id in r.unc) w[id]=r.unc[id].alts.map(a=>[a.tr,a.ctx]); r.trans={en:{template:r.trTemplate,w}}; })();
+
+/* Multi-page journal with a blurry page 2 */
+DOCS.journal = {
+  title:"Farm journal, June 1944", lang:"English", code:"en", font:"journal",
+  meta:"English cursive · 1944 · 3 pages", thumb:"#efe2c6",
+  blurry:1,
+  pages:[
+    {lines:[
+      "June 3rd, 1944",
+      "Rain all morning. Took the [team] out",
+      "to the north field after dinner and",
+      "got the last of the [oats] planted.",
+      "Mother is feeling poorly again.",
+      "Dr. [pratt] came by in the evening."
+    ], paras:[0,1]},
+    {lines:[
+      "June 5th",
+      "Clear and warm. Went to town for",
+      "[feed] and a new [harness] strap.",
+      "Saw [clara] at the post office. She",
+      "says the dance is Saturday next."
+    ], paras:[0,1]},
+    {lines:[
+      "June 8th",
+      "Letter from [jim] today, he is safe",
+      "in England. Mother cried when she",
+      "read it. Fixed the [fence] by the",
+      "creek. Clara and I will go to the",
+      "dance after all."
+    ], paras:[0,1]}
+  ],
+  unc:{
+    team:{ink:"team",why:"The second letter could be an “e” or an “r”.",
+      alts:[{t:"team",p:.61},{t:"tram",p:.22},{t:"train",p:.17}]},
+    oats:{ink:"oats",why:"The first letter is open at the top, so it could be an “o” or a “c”.",
+      alts:[{t:"oats",p:.54},{t:"cats",p:.30},{t:"oaks",p:.16}]},
+    pratt:{ink:"Pruitt",why:"The middle of this name is cramped. Names can't be checked against a dictionary, so you may know better than I do.",
+      alts:[{t:"Pratt",p:.48},{t:"Pruitt",p:.37},{t:"Platt",p:.15}]},
+    feed:{ink:"feed",why:"The two middle letters could be “ee” or “oo”.",
+      alts:[{t:"feed",p:.70},{t:"food",p:.20},{t:"seed",p:.10}]},
+    harness:{ink:"harness",why:"The letters after “har” run together.",
+      alts:[{t:"harness",p:.68},{t:"harvest",p:.32}]},
+    clara:{ink:"Clara",why:"The ending trails off.",
+      alts:[{t:"Clara",p:.63},{t:"Clare",p:.25},{t:"Cora",p:.12}]},
+    jim:{ink:"Jim",why:"The first letter could be a “J” or a “T”.",
+      alts:[{t:"Jim",p:.59},{t:"Tim",p:.33},{t:"Jem",p:.08}]},
+    fence:{ink:"fence",why:"The middle letters are faint.",
+      alts:[{t:"fence",p:.81},{t:"force",p:.19}]}
+  },
+  trans:{de:{
+    pages:[
+      "3. Juni 1944\nRegen den ganzen Vormittag. Fuhr nach dem Mittagessen mit dem {team} aufs Nordfeld und habe den letzten {oats} gesät. Mutter geht es wieder schlecht. Dr. {pratt} kam am Abend vorbei.",
+      "5. Juni\nKlar und warm. Fuhr in die Stadt, um {feed} und einen neuen {harness}riemen zu holen. Traf {clara} auf der Post. Sie sagt, der Tanz ist nächsten Samstag.",
+      "8. Juni\nHeute ein Brief von {jim}, er ist in England in Sicherheit. Mutter hat geweint, als sie ihn las. Habe den {fence} am Bach repariert. Clara und ich gehen doch zum Tanz."
+    ],
+    w:{
+      team:[["Gespann","Fuhr mit dem <b>Gespann</b> aufs Nordfeld (Pferde)"],["Straßenbahn","Fuhr mit der <b>Straßenbahn</b> aufs Nordfeld (ergibt kaum Sinn)"],["Zug","Fuhr mit dem <b>Zug</b> aufs Nordfeld (ergibt kaum Sinn)"]],
+      oats:[["Hafer","…den letzten <b>Hafer</b> gesät"],["Katzen","…die letzten <b>Katzen</b> gesät (ergibt keinen Sinn)"],["Eichen","…die letzten <b>Eichen</b> gepflanzt"]],
+      pratt:[["Pratt","Dr. <b>Pratt</b> kam am Abend vorbei (Name)"],["Pruitt","Dr. <b>Pruitt</b> kam am Abend vorbei (Name)"],["Platt","Dr. <b>Platt</b> kam am Abend vorbei (Name)"]],
+      feed:[["Futter","…in die Stadt, um <b>Futter</b> zu holen (für Tiere)"],["Lebensmittel","…in die Stadt, um <b>Lebensmittel</b> zu holen"],["Saatgut","…in die Stadt, um <b>Saatgut</b> zu holen"]],
+      harness:[["Geschirr","…einen neuen <b>Geschirr</b>riemen (für Pferde)"],["Ernte","…einen neuen <b>Ernte</b>riemen (ergibt keinen Sinn)"]],
+      clara:[["Clara","Traf <b>Clara</b> auf der Post (Name)"],["Clare","Traf <b>Clare</b> auf der Post (Name)"],["Cora","Traf <b>Cora</b> auf der Post (Name)"]],
+      jim:[["Jim","Heute ein Brief von <b>Jim</b> (Name)"],["Tim","Heute ein Brief von <b>Tim</b> (Name)"],["Jem","Heute ein Brief von <b>Jem</b> (Name)"]],
+      fence:[["Zaun","Habe den <b>Zaun</b> am Bach repariert"],["Kraft","Habe die <b>Kraft</b> am Bach repariert (ergibt keinen Sinn)"]]
+    }}}
+};
+DOCS.letter.meta="English cursive · 1958 · family letter";
+DOCS.record.meta="German · 1891 · family history"; DOCS.record.thumb="#ecdfc2";
+
+/* normalize single-page docs into the pages format */
+for(const d of Object.values(DOCS)){
+  if(!d.pages){ d.pages=[{lines:d.lines,paras:d.paras}]; }
+  if(d.trTemplate){ const w={}; for(const id in d.unc) w[id]=d.unc[id].alts.map(a=>[a.tr,a.ctx]); d.trans={en:{template:d.trTemplate,w}}; }
+  if(d.trans) for(const c in d.trans) if(!d.trans[c].pages) d.trans[c].pages=[d.trans[c].template];
+}
 const LANGS={en:{name:"English",native:"English"},de:{name:"German",native:"Deutsch"}};
 let userLang="en";
 const target=d=>(d.code!==userLang && d.trans && d.trans[userLang]) ? d.trans[userLang] : null;
 const needsTr=d=>d.code!==userLang;
 
 /* ---------- State ---------- */
-let doc=null, key=null, tokens=[], order=[], state={}, edits={}, tab="orig", sheetId=null, sel=null;
+let doc=null, key=null, tokens=[], state={}, edits={}, tab="orig", sel=null, curPage=0, retaken=false;
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const multi=()=>doc.pages.length>1;
+const readable=p=>!(doc.blurry===p && !retaken);
+const order=()=>tokens.filter(t=>t.unc && readable(t.page)).map(t=>t.id);
+const pending=()=>order().filter(id=>!state[id].done);
+const blurryPending=()=>doc.blurry!=null && !retaken;
+const fontFam={letter:"'Cedarville Cursive'",record:"'Pinyon Script'",journal:"'Homemade Apple'"};
 
 function show(id){ $$(".screen").forEach(s=>s.classList.toggle("on",s.id===id)); }
-function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("on"); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("on"),1800); }
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("on"); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("on"),2000); }
 
-/* parse lines into tokens */
 function parse(d){
   const out=[];
-  d.lines.forEach((line,li)=>{
+  d.pages.forEach((pg,pi)=>pg.lines.forEach((line,li)=>{
     line.split(" ").forEach((tok,wi)=>{
       const m=tok.match(/^([^\[]*)\[(\w+)\](.*)$/);
-      if(m) out.push({line:li,id:m[2],pre:m[1],suf:m[3],unc:true});
-      else out.push({line:li,id:`w${li}_${wi}`,text:tok,unc:false});
+      if(m) out.push({page:pi,line:li,id:m[2],pre:m[1],suf:m[3],unc:true});
+      else out.push({page:pi,line:li,id:`w${pi}_${li}_${wi}`,text:tok,unc:false});
     });
-  });
+  }));
   return out;
 }
 const level=id=>doc.unc[id].alts[0].p<0.6?"low":"med";
 const curText=id=>state[id].text;
+const tok=id=>tokens.find(t=>t.id===id);
 function wordText(t){ return t.unc ? t.pre+curText(t.id)+t.suf : (edits[t.id]??t.text); }
+function inkLine(line){ return line.replace(/\[(\w+)\]/g,(_,id)=>doc.unc[id].ink); }
 function trFor(id){
   const s=state[id], i=doc.unc[id].alts.findIndex(a=>a.t===s.text);
   return i>=0?target(doc).w[id][i][0]:`[${s.text}]`;
 }
-const pending=()=>order.filter(id=>!state[id].done);
 
 /* ---------- Home ---------- */
-$$("[data-doc]").forEach(b=>b.onclick=()=>start(b.dataset.doc));
-$$("[data-pick]").forEach(b=>b.onclick=()=>openPicker());
 function renderHome(){
   $("#langlabel").textContent="I read: "+LANGS[userLang].name;
   $("#langchip").setAttribute("aria-label","Your language: "+LANGS[userLang].name+". Change language");
-  $$("[data-pill]").forEach(el=>{ const d=DOCS[el.dataset.pill];
-    el.textContent = needsTr(d) ? `Will translate to ${LANGS[userLang].name}` : "Messy handwriting"; });
+  $("#samples").innerHTML=Object.entries(DOCS).map(([k,d])=>{
+    const pills=[];
+    if(needsTr(d)) pills.push(`Will translate to ${LANGS[userLang].name}`);
+    if(d.pages.length>1) pills.push(`${d.pages.length} pages`);
+    if(d.blurry!=null) pills.push("1 blurry photo");
+    if(!pills.length) pills.push("Messy handwriting");
+    const lines=[12,22,32,42,52,62].map((t,i)=>`<span style="top:${t}px;${i%3===1?'right:20px':''}"></span>`).join("");
+    const stack=d.pages.length>1?"box-shadow:3px 3px 0 #e6d8bb,6px 6px 0 #ddcda9,inset 0 0 12px rgba(120,90,40,.25)":"";
+    return `<button class="sample" data-doc="${k}"><div class="thumb" aria-hidden="true" style="background:${d.thumb||'var(--paper)'};${stack}">${lines}</div>
+      <div><b>${esc(d.title)}</b><small>${esc(d.meta)}</small>${pills.map(p=>`<span class="pill" style="margin-right:4px">${p}</span>`).join("")}</div></button>`;
+  }).join("");
+  $$("[data-doc]").forEach(b=>b.onclick=()=>start(b.dataset.doc));
 }
+$$("[data-pick]").forEach(b=>b.onclick=()=>openPicker());
 $("#langchip").onclick=()=>{
   openSheet("What language do you read?<small>If a document is in another language, I'll translate it into this one.</small>",
     `<div class="opts" role="radiogroup" aria-label="Your language">${Object.entries(LANGS).map(([c,l])=>`
@@ -401,39 +544,99 @@ $("#langchip").onclick=()=>{
       <p class="zcap" style="margin-top:4px">More languages in the full app.</p></div>`,"");
   $$("[data-l]").forEach(b=>b.onclick=()=>{ userLang=b.dataset.l; renderHome(); closeSheet(); toast("Language set to "+LANGS[userLang].name); });
 };
-renderHome();
-
 function openPicker(){
   openSheet("Choose a document",
    `<div class="pick"><p>In this prototype, the camera and upload are simulated. Pick a sample document to continue.</p>
-    <button class="sample" data-p="letter"><div><b>Letter to Margaret</b><small>English cursive · 1958</small></div></button>
-    <button class="sample" data-p="record"><div><b>Baptism record, Kirchberg</b><small>German · 1891</small></div></button></div>`,"");
+    ${Object.entries(DOCS).map(([k,d])=>`<button class="sample" data-p="${k}"><div><b>${esc(d.title)}</b><small>${esc(d.meta)}</small></div></button>`).join("")}</div>`,"");
   $$("[data-p]").forEach(b=>b.onclick=()=>{closeSheet();start(b.dataset.p);});
 }
+renderHome();
 
 /* ---------- Processing ---------- */
-function start(k){
-  key=k; doc=DOCS[k]; tokens=parse(doc); order=tokens.filter(t=>t.unc).map(t=>t.id);
-  state={}; edits={}; tab="orig";
-  order.forEach(id=>state[id]={text:doc.unc[id].alts[0].t,done:false,how:null});
-  const sb=$("#scanbox");
-  sb.innerHTML=`<div class="scanline"></div>`+doc.lines.slice(0,9).map(l=>`<div style="font-family:${doc.font==='letter'?"'Cedarville Cursive'":"'Pinyon Script'"},cursive;white-space:nowrap">${esc(l.replace(/\[(\w+)\]/g,(_,id)=>doc.unc[id].ink))}</div>`).join("");
-  $("#proc-title").textContent="Reading your document…";
-  const steps=["Finding lines of text","Reading the handwriting"];
-  if(target(doc)) steps.push(`Detected ${doc.lang} · translating to ${LANGS[userLang].name}`);
-  steps.push("Flagging words I'm unsure about");
-  const ul=$("#steps"); ul.innerHTML=steps.map(s=>`<li><span class="dot"></span>${s}</li>`).join("");
+function scan(pageIdx,blur){
+  const pg=doc.pages[pageIdx];
+  $("#scanbox").innerHTML=`<div class="scanline"></div>`+pg.lines.slice(0,9).map(l=>`<div style="font-family:${fontFam[doc.font]},cursive;white-space:nowrap;${doc.font==='journal'?'font-size:12px;line-height:2.1;':''}${blur?'filter:blur(2.2px);':''}">${esc(inkLine(l))}</div>`).join("");
+}
+/* steps: array of strings or {label, warn} ; calls done() after the last */
+function runSteps(title,steps,done){
+  $("#proc-title").textContent=title;
+  const ul=$("#steps");
+  ul.innerHTML=steps.map(s=>`<li><span class="dot"></span><span class="lb">${typeof s==="string"?s:s.label}</span></li>`).join("");
   show("s-proc");
   const lis=[...ul.children]; let i=0;
   const tick=()=>{
-    if(i>0){lis[i-1].className="done";lis[i-1].querySelector(".dot").textContent="✓";}
-    if(i<lis.length){lis[i].className="doing";i++;setTimeout(tick,850);}
-    else{
-      $("#proc-title").textContent=`Done. ${order.length} words need a second look.`;
-      setTimeout(openReview,1000);
-    }
+    if(i>0){ const prev=steps[i-1], li=lis[i-1];
+      if(prev.warn){ li.className="warn"; li.querySelector(".dot").textContent="!"; li.querySelector(".lb").textContent=prev.warn; }
+      else { li.className="done"; li.querySelector(".dot").textContent="✓"; } }
+    if(i<lis.length){ lis[i].className="doing"; i++; setTimeout(tick,800); }
+    else setTimeout(done,steps[steps.length-1].warn?900:300);
   };
   tick();
+}
+function readSteps(){
+  const s=["Reading the handwriting"];
+  if(target(doc)) s.push(`Detected ${doc.lang} · translating to ${LANGS[userLang].name}`);
+  s.push("Flagging words I'm unsure about");
+  return s;
+}
+function start(k){
+  key=k; doc=DOCS[k]; tokens=parse(doc); retaken=false; curPage=0;
+  state={}; edits={}; tab="orig";
+  tokens.filter(t=>t.unc).forEach(t=>state[t.id]={text:doc.unc[t.id].alts[0].t,done:false,how:null});
+  scan(0,false);
+  if(doc.blurry!=null){
+    const n=doc.pages.length;
+    runSteps("Reading your document…",[`Finding pages · ${n} found`,{label:"Checking photo quality",warn:`Page ${doc.blurry+1} is too blurry`}],()=>{ scan(doc.blurry,true); showError(); });
+  } else {
+    runSteps("Reading your document…",["Finding lines of text",...readSteps()],()=>{
+      $("#proc-title").textContent=`Done. ${order().length} words need a second look.`;
+      setTimeout(openReview,900);
+    });
+  }
+}
+
+/* ---------- Error: blurry page ---------- */
+function showError(){
+  const b=doc.blurry, n=doc.pages.length, others=doc.pages.map((_,i)=>i).filter(i=>i!==b).map(i=>i+1);
+  const othersTxt=others.length===2?`pages ${others[0]} and ${others[1]}`:`pages ${others.join(", ")}`;
+  $("#err-title").textContent=doc.title;
+  const tip=(d,t,s)=>`<li><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${d}</svg><div><b>${t}</b><small>${s}</small></div></li>`;
+  $("#err").innerHTML=`
+    <div class="warnicon" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17v.5"/></svg></div>
+    <h2>Page ${b+1} is too blurry to read</h2>
+    <p class="sub">I can read ${othersTxt}, but the letters on page ${b+1} run together. If I guessed, I'd likely be wrong without knowing it.</p>
+    <div class="strip" role="list" aria-label="Pages">${doc.pages.map((_,i)=>`
+      <figure role="listitem" class="${i===b?'bad':''}"><div class="pg" aria-hidden="true">${[12,22,32,42,52,62].map(t=>`<span style="top:${t}px"></span>`).join("")}</div>Page ${i+1} ${i===b?"· Blurry":"✓"}</figure>`).join("")}</div>
+    <div class="blurprev" aria-hidden="true">${doc.pages[b].lines.map(l=>`<div>${esc(inkLine(l))}</div>`).join("")}</div>
+    <p class="zcap" style="margin:0">Your photo of page ${b+1}</p>
+    <ul class="tips" aria-label="Tips for a sharper photo">
+      ${tip('<path d="M7 11V7a2 2 0 014 0v4M11 9V6a2 2 0 014 0v5M15 9a2 2 0 014 0v4a7 7 0 01-7 7h-1a6 6 0 01-5-3l-2-4a2 2 0 013-2l1 2"/>',"Hold your phone steady","Rest your elbows on the table, then tap and wait for it to focus.")}
+      ${tip('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/>',"Use bright, even light","Near a window works well. Avoid your phone's shadow.")}
+      ${tip('<rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M9 8h6M9 12h6M9 16h4"/>',"Lay the page flat","Fill the screen with the page so the letters are bigger.")}
+    </ul>`;
+  $("#err-retake").textContent=`Retake page ${b+1}`;
+  $("#err-skip").textContent=`Continue without page ${b+1}`;
+  $("#err-note").textContent=`You can retake page ${b+1} any time while you review.`;
+  $("#err-retake").onclick=()=>retake(true);
+  $("#err-skip").onclick=()=>{
+    scan(0,false);
+    runSteps("Reading your document…",[`Reading ${othersTxt}`,...readSteps().slice(1)],()=>{
+      $("#proc-title").textContent=`Done. ${order().length} words need a second look.`;
+      setTimeout(()=>{ curPage=0; openReview(); },900);
+    });
+  };
+  $("#err-back").onclick=()=>show("s-home");
+  show("s-error");
+}
+function retake(fromError){
+  const b=doc.blurry;
+  scan(b,false);
+  runSteps(`Retaking page ${b+1}…`,[`New photo of page ${b+1}`,"Checking photo quality · looks sharp",...readSteps()],()=>{
+    retaken=true;
+    const n=tokens.filter(t=>t.unc&&t.page===b).length;
+    $("#proc-title").textContent=fromError?`Done. ${order().length} words need a second look.`:`Page ${b+1} is readable now.`;
+    setTimeout(()=>{ curPage=fromError?0:b; openReview(); if(!fromError) toast(`${n} new words to check on page ${b+1}`); },900);
+  });
 }
 
 /* ---------- Review ---------- */
@@ -443,50 +646,86 @@ function openReview(){
   const tt=target(doc);
   $("#tabs").hidden=!tt; $("#trnote").hidden=!tt;
   if(tt){ $("#tabs [data-tab=orig]").textContent=`${doc.lang} (original)`; $("#tabs [data-tab=tr]").textContent=`${LANGS[userLang].name} translation`;
-    $$("#tabs button").forEach(x=>x.setAttribute("aria-selected",x.dataset.tab==="orig")); }
-  renderDoc(); renderTx(); updateProgress();
+    $$("#tabs button").forEach(x=>x.setAttribute("aria-selected",x.dataset.tab===tab)); }
+  renderPages(); renderDoc(); renderTx(); updateProgress();
   show("s-review");
 }
+function pageStatus(p){
+  if(!readable(p)) return ["bad","Blurry"];
+  const ids=tokens.filter(t=>t.unc&&t.page===p).map(t=>t.id), left=ids.filter(id=>!state[id].done).length;
+  return left?["todo",`${left} to check`]:["ok","✓ Done"];
+}
+function renderPages(){
+  const el=$("#pages"); el.hidden=!multi(); if(!multi()) return;
+  el.innerHTML=doc.pages.map((_,i)=>{ const [c,t]=pageStatus(i);
+    return `<button aria-pressed="${i===curPage}" data-pg="${i}">Page ${i+1}<span class="st ${c}">${t}</span></button>`; }).join("");
+  $$("#pages button").forEach(b=>b.onclick=()=>{ curPage=+b.dataset.pg; renderPages(); renderDoc(); });
+}
 function renderDoc(){
-  const byLine={};
-  tokens.forEach(t=>(byLine[t.line]??=[]).push(t));
-  $("#doc").innerHTML=Object.values(byLine).map(ts=>`<div class="hl">`+ts.map(t=>{
+  const d=$("#doc"), lines={};
+  tokens.filter(t=>t.page===curPage).forEach(t=>(lines[t.line]??=[]).push(t));
+  const ok=readable(curPage);
+  d.classList.toggle("blurry",!ok);
+  d.innerHTML=Object.values(lines).map(ts=>`<div class="hl ${doc.font}">`+ts.map(t=>{
+    if(!ok) return esc(t.unc? t.pre+doc.unc[t.id].ink+t.suf : t.text);
     if(t.unc) return `${esc(t.pre)}<span class="dw unc ${level(t.id)} ${state[t.id].done?'done':''}" data-id="${t.id}">${esc(doc.unc[t.id].ink)}</span>${esc(t.suf)}`;
     return `<span class="dw" data-id="${t.id}">${esc(t.text)}</span>`;
   }).join(" ")+`</div>`).join("");
+  $("#blurmsg").innerHTML= ok? "" : `<div class="blurmsg" role="group" aria-label="Page ${curPage+1} problem"><b>This photo is too blurry to read</b><button class="btn primary" data-retake>Retake page ${curPage+1}</button></div>`;
+  $("#docbar-t").textContent= ok? (multi()?`Your photo of page ${curPage+1} · tap a word`:"Your photo · tap a word to check it") : `Page ${curPage+1} wasn't transcribed`;
   $$("#doc .dw").forEach(s=>s.onclick=()=>openWord(s.dataset.id));
+  $$("[data-retake]").forEach(b=>b.onclick=()=>retake(false));
 }
 function cls(id){ const s=state[id]; return "w unc "+(s.done?"done":level(id)); }
 function aria(id){ const s=state[id]; return `${s.text}. ${s.done?"Reviewed":(level(id)==="low"?"Not sure":"Fairly sure")}. Tap to review.`; }
+function skipCard(p){
+  return `<div class="skipcard"><b>Page ${p+1} was too blurry to read</b>Nothing from this page is in your transcription yet.<button class="btn primary" data-retake>Retake page ${p+1}</button></div>`;
+}
 function renderTx(){
-  const tx=$("#tx");
-  const tt=target(doc);
+  const tx=$("#tx"), tt=target(doc);
+  let html="";
   if(tt && tab==="tr"){
     $("#trnote-t").textContent=`Highlighted words come from spots you haven't reviewed yet. Tap one to compare the ${doc.lang} options and their meanings.`;
-    const parts=tt.template.split("\n").map(p=>esc(p).replace(/\{(\w+)\}/g,(_,id)=>`<button class="${cls(id)}" data-id="${id}" aria-label="${esc(aria(id))}">${esc(trFor(id))}</button>`));
-    tx.innerHTML=parts.map(p=>`<p>${p}</p>`).join("");
+    doc.pages.forEach((_,p)=>{
+      if(multi()) html+=`<h4 class="pghead">Page ${p+1}</h4>`;
+      if(!readable(p)){ html+=skipCard(p); return; }
+      html+=tt.pages[p].split("\n").map(par=>`<p lang="${userLang}">`+esc(par).replace(/\{(\w+)\}/g,(_,id)=>`<button class="${cls(id)}" data-id="${id}" aria-label="${esc(aria(id))}">${esc(trFor(id))}</button>`)+`</p>`).join("");
+    });
   } else {
     if(tt) $("#trnote-t").textContent=`This document is in ${doc.lang}. When you check a word, you'll see each ${doc.lang} option with its ${LANGS[userLang].name} meaning.`;
-    let html="", cur=-1;
-    tokens.forEach(t=>{
-      if(t.line!==cur){
-        if(cur>=0) html+= doc.paras.includes(t.line)?"</p><p>":" ";
-        cur=t.line;
-      } else html+=" ";
-      if(t.unc) html+=`${esc(t.pre)}<button class="${cls(t.id)}" data-id="${t.id}" aria-label="${esc(aria(t.id))}">${esc(curText(t.id))}</button>${esc(t.suf)}`;
-      else html+=`<button class="w ${edits[t.id]!=null?'edited':''}" tabindex="-1" data-id="${t.id}">${esc(wordText(t))}</button>`;
+    doc.pages.forEach((pg,p)=>{
+      if(multi()) html+=`<h4 class="pghead">Page ${p+1}</h4>`;
+      if(!readable(p)){ html+=skipCard(p); return; }
+      let h="", cur=-1;
+      tokens.filter(t=>t.page===p).forEach(t=>{
+        if(t.line!==cur){ if(cur>=0) h+= pg.paras.includes(t.line)?"</p><p>":" "; cur=t.line; } else h+=" ";
+        if(t.unc) h+=`${esc(t.pre)}<button class="${cls(t.id)}" data-id="${t.id}" aria-label="${esc(aria(t.id))}">${esc(curText(t.id))}</button>${esc(t.suf)}`;
+        else h+=`<button class="w ${edits[t.id]!=null?'edited':''}" tabindex="-1" data-id="${t.id}">${esc(wordText(t))}</button>`;
+      });
+      html+=`<p lang="${doc.code}">`+h+"</p>";
     });
-    tx.innerHTML="<p>"+html+"</p>";
   }
+  tx.innerHTML=html;
   $$("#tx .w").forEach(b=>b.onclick=()=>openWord(b.dataset.id));
+  $$("#tx [data-retake]").forEach(b=>b.onclick=()=>retake(false));
 }
 function updateProgress(){
-  const n=order.length, d=n-pending().length;
-  $("#rv-prog").textContent=`${d} of ${n} uncertain words reviewed`;
-  $("#rv-bar").style.width=(d/n*100)+"%";
-  const nb=$("#nextbtn"), p=pending().length;
-  if(p){ nb.innerHTML=`Review next word <span style="opacity:.75;font-weight:500">(${p} left)</span>`; nb.onclick=()=>openWord(pending()[0]); }
-  else { nb.innerHTML=`Finish transcription`; nb.onclick=finish; }
+  const n=order().length, p=pending().length, d=n-p;
+  $("#rv-prog").textContent=`${d} of ${n} uncertain words reviewed`+(blurryPending()?` · page ${doc.blurry+1} missing`:"");
+  $("#rv-bar").style.width=(n?d/n*100:0)+"%";
+  const bb=$("#rv-bottom");
+  bb.classList.remove("two");
+  if(p){
+    bb.innerHTML=`<button class="btn primary" id="nextbtn">Review next word <span style="opacity:.75;font-weight:500">(${p} left)</span></button>`;
+    $("#nextbtn").onclick=()=>openWord(pending()[0]);
+  } else if(blurryPending()){
+    bb.classList.add("two");
+    bb.innerHTML=`<button class="btn primary" id="rtk">Retake page ${doc.blurry+1}</button><button class="btn ghost" id="finbtn">Finish without page ${doc.blurry+1}</button>`;
+    $("#rtk").onclick=()=>retake(false); $("#finbtn").onclick=finish;
+  } else {
+    bb.innerHTML=`<button class="btn primary" id="finbtn">Finish transcription</button>`;
+    $("#finbtn").onclick=finish;
+  }
 }
 $$("#tabs button").forEach(b=>b.onclick=()=>{
   tab=b.dataset.tab; $$("#tabs button").forEach(x=>x.setAttribute("aria-selected",x===b)); renderTx();
@@ -494,8 +733,10 @@ $$("#tabs button").forEach(b=>b.onclick=()=>{
 $("#back").onclick=()=>show("s-home");
 $("#docsize").onclick=e=>{const w=$("#docwrap");const big=w.classList.toggle("big");e.target.textContent=big?"Shrink":"Expand";e.target.setAttribute("aria-expanded",big);};
 
-/* link transcription <-> document */
+/* link transcription <-> document (switches page if needed) */
 function flash(id){
+  const t=tok(id);
+  if(t.page!==curPage){ curPage=t.page; renderPages(); renderDoc(); }
   $$("#doc .dw.flash").forEach(x=>x.classList.remove("flash"));
   $$(".w.active").forEach(x=>x.classList.remove("active"));
   const s=$(`#doc .dw[data-id="${id}"]`);
@@ -511,7 +752,7 @@ function openSheet(title,body,foot){
   setTimeout(()=>($("#sheet [aria-checked=true]")||$("#sh-close")).focus(),320);
 }
 function closeSheet(){
-  $("#scrim").classList.remove("on"); $("#sheet").classList.remove("on"); sheetId=null;
+  $("#scrim").classList.remove("on"); $("#sheet").classList.remove("on");
   $$("#doc .dw.flash").forEach(x=>x.classList.remove("flash")); $$(".w.active").forEach(x=>x.classList.remove("active"));
 }
 $("#scrim").onclick=closeSheet; $("#sh-close").onclick=closeSheet;
@@ -520,26 +761,26 @@ document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&$("#sheet").classL
 function zoomHTML(id){
   const i=tokens.findIndex(t=>t.id===id), t=tokens[i];
   const ink=t2=>t2? (t2.unc? t2.pre+doc.unc[t2.id].ink+t2.suf : t2.text):"";
-  const prev=tokens[i-1]&&tokens[i-1].line===t.line?ink(tokens[i-1]):"";
-  const next=tokens[i+1]&&tokens[i+1].line===t.line?ink(tokens[i+1]):"";
+  const same=t2=>t2&&t2.page===t.page&&t2.line===t.line;
+  const prev=same(tokens[i-1])?ink(tokens[i-1]):"", next=same(tokens[i+1])?ink(tokens[i+1]):"";
   const mid=t.unc? `${esc(t.pre)}<span class="z">${esc(doc.unc[id].ink)}</span>${esc(t.suf)}` : `<span class="z">${esc(t.text)}</span>`;
-  return `<div class="zoom f-${doc.font}" aria-hidden="true"><span class="ctx">${esc(prev)}</span> ${mid} <span class="ctx">${esc(next)}</span></div><p class="zcap">Zoomed in from your photo, line ${t.line+1}</p>`;
+  return `<div class="zoom f-${doc.font}" aria-hidden="true"><span class="ctx">${esc(prev)}</span> ${mid} <span class="ctx">${esc(next)}</span></div><p class="zcap">Zoomed in from your photo, ${multi()?`page ${t.page+1}, `:""}line ${t.line+1}</p>`;
 }
 
 function openWord(id){
-  sheetId=id; flash(id);
-  const t=tokens.find(t=>t.id===id);
+  flash(id);
+  const t=tok(id);
   if(!t.unc) return openEdit(t);
-  const u=doc.unc[id], s=state[id], n=order.indexOf(id)+1;
+  const u=doc.unc[id], s=state[id], ord=order(), n=ord.indexOf(id)+1, tt=target(doc);
   const isOwn=!u.alts.some(a=>a.t===s.text);
   sel = isOwn? "__own" : s.text;
   const lv=level(id);
-  const title=`${s.done?"Reviewed word":(lv==="low"?"I'm not sure about this word":"I'm fairly sure, but check")}<small>Word ${n} of ${order.length}${target(doc)?` · options in ${doc.lang} with ${LANGS[userLang].name} meaning`:""}</small>`;
+  const title=`${s.done?"Reviewed word":(lv==="low"?"I'm not sure about this word":"I'm fairly sure, but check")}<small>Word ${n} of ${ord.length}${multi()?` · page ${t.page+1}`:""}${tt?` · ${doc.lang} with ${LANGS[userLang].name} meaning`:""}</small>`;
   const opts=u.alts.map((a,i)=>`
     <button class="opt" role="radio" aria-checked="${sel===a.t}" data-v="${esc(a.t)}">
       <div class="row"><span class="radio"></span><span class="word" lang="${doc.code}">${esc(a.t.replace(/\.$/,""))}</span>${i===0?'<span class="badge best">AI\'s best guess</span>':''}</div>
       <div class="conf"><span class="bar"><i style="width:${a.p*100}%"></i></span>${Math.round(a.p*100)}% likely</div>
-      ${target(doc)?`<div class="tr" lang="${userLang}"><span class="lbl">In ${LANGS[userLang].name}</span>${target(doc).w[id][i][1]}</div>`:""}
+      ${tt?`<div class="tr" lang="${userLang}"><span class="lbl">In ${LANGS[userLang].name}</span>${tt.w[id][i][1]}</div>`:""}
     </button>`).join("");
   const own=`<button class="opt own" role="radio" aria-checked="${isOwn}" data-v="__own">
       <div class="row"><span class="radio"></span><span class="word">None of these, I'll type it</span></div>
@@ -548,7 +789,7 @@ function openWord(id){
   const body=`${zoomHTML(id)}
     <div class="why"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17v.5"/></svg><div><b>Why I'm unsure:</b> ${u.why}</div></div>
     <div class="opts" role="radiogroup" aria-label="Possible readings">${opts}${own}</div>`;
-  const foot=`<button class="btn ghost" id="skip">${pending().filter(x=>x!==id).length?"Skip for now":"Cancel"}</button><button class="btn primary" id="confirm">Confirm</button>`;
+  const foot=`<button class="btn ghost" id="skip">${nextAfter(id)?"Skip for now":"Cancel"}</button><button class="btn primary" id="confirm">Confirm</button>`;
   openSheet(title,body,foot);
   $$(".opt").forEach(o=>o.onclick=e=>{
     if(e.target.tagName==="INPUT") return;
@@ -562,7 +803,7 @@ function openWord(id){
   $("#confirm").onclick=()=>confirmWord(id);
   validate();
 }
-function nextAfter(id){ const p=pending().filter(x=>x!==id); const i=order.indexOf(id); return p.find(x=>order.indexOf(x)>i)||p[0]; }
+function nextAfter(id){ const ord=order(), p=pending().filter(x=>x!==id), i=ord.indexOf(id); return p.find(x=>ord.indexOf(x)>i)||p[0]; }
 function validate(){ $("#confirm").disabled = sel==="__own" && !$("#ownin").value.trim(); }
 
 function confirmWord(id){
@@ -570,11 +811,11 @@ function confirmWord(id){
   const val= sel==="__own" ? $("#ownin").value.trim() : sel;
   s.text=val; s.done=true;
   s.how = sel==="__own" ? "typed" : (val===u.alts[0].t ? "kept" : "changed");
-  renderDoc(); renderTx(); updateProgress();
+  renderPages(); renderDoc(); renderTx(); updateProgress();
   const nx=nextAfter(id);
   toast(`Saved “${val.replace(/\.$/,"")}”`);
   if(nx) setTimeout(()=>openWord(nx),250);
-  else { closeSheet(); setTimeout(()=>toast("All words reviewed. Tap Finish when ready."),400); }
+  else { closeSheet(); setTimeout(()=>toast(blurryPending()?`Done! Page ${doc.blurry+1} still needs a new photo.`:"All words reviewed. Tap Finish when ready."),400); }
 }
 
 function openEdit(t){
@@ -590,31 +831,40 @@ function openEdit(t){
 
 /* ---------- Finish ---------- */
 function plain(){
-  let out="", cur=-1;
-  tokens.forEach(t=>{ if(t.line!==cur){ if(cur>=0) out+= doc.paras.includes(t.line)?"\n\n":"\n"; cur=t.line;} else out+=" "; out+=wordText(t); });
-  return out;
+  return doc.pages.map((pg,p)=>{
+    const head=multi()?`— Page ${p+1} —\n`:"";
+    if(!readable(p)) return head+`[Not transcribed: photo too blurry]`;
+    let out="", cur=-1;
+    tokens.filter(t=>t.page===p).forEach(t=>{ if(t.line!==cur){ if(cur>=0) out+= pg.paras.includes(t.line)?"\n\n":"\n"; cur=t.line;} else out+=" "; out+=wordText(t); });
+    return head+out;
+  }).join("\n\n");
 }
-function plainTr(){ return target(doc).template.replace(/\{(\w+)\}/g,(_,id)=>trFor(id)); }
+function plainTr(){
+  const tt=target(doc);
+  return doc.pages.map((_,p)=>(multi()?`— Page ${p+1} —\n`:"")+(readable(p)?tt.pages[p].replace(/\{(\w+)\}/g,(_,id)=>trFor(id)):"[Not translated: photo too blurry]")).join("\n\n");
+}
 function finish(){
-  const c={kept:0,changed:0,typed:0}; order.forEach(id=>c[state[id].how]++);
-  const ne=Object.keys(edits).length;
+  const c={kept:0,changed:0,typed:0}; order().forEach(id=>c[state[id].how]++);
+  const ne=Object.keys(edits).length, miss=blurryPending(), tt=target(doc);
   $("#fin").innerHTML=`
     <div class="ok"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 12.5l4.5 4.5L19 7"/></svg></div>
     <h2>Nice work</h2>
-    <p class="sub">You checked every word I was unsure about.</p>
+    <p class="sub">${miss?`You checked every word I could read. Page ${doc.blurry+1} is still missing.`:"You checked every word I was unsure about."}</p>
+    ${miss?`<div class="skipcard" style="margin-bottom:16px"><b>Page ${doc.blurry+1} isn't included</b>The photo was too blurry. Retake it to add it to this transcription.<button class="btn primary" id="fin-retake">Retake page ${doc.blurry+1}</button></div>`:""}
     <div class="stats">
       <div><b>${c.kept}</b><small>AI guesses you confirmed</small></div>
       <div><b>${c.changed}</b><small>Times you picked another option</small></div>
       <div><b>${c.typed+ne}</b><small>Words you typed or fixed</small></div>
     </div>
     <div class="card"><div class="hd"><b>${doc.lang} transcription</b><button data-copy="t">Copy</button></div><p lang="${doc.code}">${esc(plain())}</p></div>
-    ${target(doc)?`<div class="card"><div class="hd"><b>${LANGS[userLang].name} translation</b><button data-copy="tr">Copy</button></div><p lang="${userLang}">${esc(plainTr())}</p></div>`:""}
+    ${tt?`<div class="card"><div class="hd"><b>${LANGS[userLang].name} translation</b><button data-copy="tr">Copy</button></div><p lang="${userLang}">${esc(plainTr())}</p></div>`:""}
     <button class="btn soft" id="again" style="margin-bottom:10px">Keep editing</button>
     <button class="btn ghost" id="newdoc">Start a new document</button>`;
   $$("[data-copy]").forEach(b=>b.onclick=async()=>{
     const txt=b.dataset.copy==="t"?plain():plainTr();
     try{ await navigator.clipboard.writeText(txt); toast("Copied"); }catch(e){ toast("Couldn't copy. Select the text instead."); }
   });
+  if(miss) $("#fin-retake").onclick=()=>retake(false);
   $("#again").onclick=()=>show("s-review"); $("#fin-back").onclick=()=>show("s-review");
   $("#newdoc").onclick=()=>show("s-home");
   show("s-fin");
