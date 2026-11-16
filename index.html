@@ -409,7 +409,6 @@ const DOCS = {
 DOCS.journal = {
   title:"Farm journal, June 1944", lang:"English", code:"en", font:"journal",
   meta:"English cursive · 1944 · 3 pages", thumb:"#efe2c6",
-  blurry:1,
   pages:[
     {lines:[
       "June 3rd, 1944",
@@ -470,6 +469,12 @@ DOCS.journal = {
       fence:[["Zaun","Habe den <b>Zaun</b> am Bach repariert"],["Kraft","Habe die <b>Kraft</b> am Bach repariert (ergibt keinen Sinn)"]]
     }}}
 };
+DOCS.recipe = {
+  title:"Apple cake recipe card", lang:"English", code:"en", font:"letter",
+  meta:"English · handwritten recipe card", thumb:"#f1e4c9", unreadable:true,
+  pages:[{lines:["Grandma's Apple Cake","2 cups flour, 1 cup sugar","1 tsp cinnamon, pinch of salt","3 apples, peeled and sliced","Bake at 350 for 45 minutes"],paras:[0]}],
+  unc:{}
+};
 DOCS.letter.meta="English cursive · 1958 · family letter";
 DOCS.record.meta="German · 1891 · family history"; DOCS.record.thumb="#ecdfc2";
 
@@ -527,7 +532,7 @@ function renderHome(){
     const pills=[];
     if(needsTr(d)) pills.push(`Will translate to ${LANGS[userLang].name}`);
     if(d.pages.length>1) pills.push(`${d.pages.length} pages`);
-    if(d.blurry!=null) pills.push("1 blurry photo");
+    if(d.unreadable) pills.push("Blurry photo");
     if(!pills.length) pills.push("Messy handwriting");
     const lines=[12,22,32,42,52,62].map((t,i)=>`<span style="top:${t}px;${i%3===1?'right:20px':''}"></span>`).join("");
     const stack=d.pages.length>1?"box-shadow:3px 3px 0 #e6d8bb,6px 6px 0 #ddcda9,inset 0 0 12px rgba(120,90,40,.25)":"";
@@ -584,7 +589,9 @@ function start(k){
   state={}; edits={}; tab="orig";
   tokens.filter(t=>t.unc).forEach(t=>state[t.id]={text:doc.unc[t.id].alts[0].t,done:false,how:null});
   scan(0,false);
-  if(doc.blurry!=null){
+  if(doc.unreadable){
+    runSteps("Reading your document…",["Finding lines of text",{label:"Checking photo quality",warn:"Photo is too blurry"}],()=>{ scan(0,true); showUnreadable(); });
+  } else if(doc.blurry!=null){
     const n=doc.pages.length;
     runSteps("Reading your document…",[`Finding pages · ${n} found`,{label:"Checking photo quality",warn:`Page ${doc.blurry+1} is too blurry`}],()=>{ scan(doc.blurry,true); showError(); });
   } else {
@@ -593,6 +600,29 @@ function start(k){
       setTimeout(openReview,900);
     });
   }
+}
+
+/* ---------- Error: whole photo too blurry ---------- */
+function showUnreadable(){
+  $("#err-title").textContent=doc.title;
+  const tip=(d,t,s)=>`<li><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${d}</svg><div><b>${t}</b><small>${s}</small></div></li>`;
+  $("#err").innerHTML=`
+    <div class="warnicon" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17v.5"/></svg></div>
+    <h2>This photo is too blurry to read</h2>
+    <p class="sub">The letters run together, so I can't transcribe it. If I guessed, I'd likely be wrong without knowing it, so I'd rather not give you a transcription you can't trust.</p>
+    <div class="blurprev" aria-hidden="true" style="font-family:'Cedarville Cursive',cursive;font-size:19px">${doc.pages[0].lines.map(l=>`<div>${esc(l)}</div>`).join("")}</div>
+    <p class="zcap" style="margin:0">Your photo</p>
+    <p class="sec-label" style="margin:18px 0 0">For a clearer photo</p>
+    <ul class="tips" aria-label="Tips for a clearer photo" style="margin-top:4px">
+      ${tip('<path d="M7 11V7a2 2 0 014 0v4M11 9V6a2 2 0 014 0v5M15 9a2 2 0 014 0v4a7 7 0 01-7 7h-1a6 6 0 01-5-3l-2-4a2 2 0 013-2l1 2"/>',"Hold your phone steady","Rest your elbows on the table and wait for it to focus.")}
+      ${tip('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/>',"Use bright, even light","Near a window works well. Avoid your phone's shadow.")}
+      ${tip('<rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M9 8h6M9 12h6M9 16h4"/>',"Lay the page flat","Fill the screen with the page so the letters are bigger.")}
+    </ul>`;
+  $("#err-retake").textContent="Choose a different photo";
+  $("#err-retake").onclick=()=>show("s-home");
+  $("#err-skip").hidden=true; $("#err-note").hidden=true;
+  $("#err-back").onclick=()=>show("s-home");
+  show("s-error");
 }
 
 /* ---------- Error: blurry page ---------- */
@@ -616,6 +646,7 @@ function showError(){
     </ul>`;
   $("#err-retake").textContent=`Retake page ${b+1}`;
   $("#err-skip").textContent=`Continue without page ${b+1}`;
+  $("#err-skip").hidden=false; $("#err-note").hidden=false;
   $("#err-note").textContent=`You can retake page ${b+1} any time while you review.`;
   $("#err-retake").onclick=()=>retake(true);
   $("#err-skip").onclick=()=>{
