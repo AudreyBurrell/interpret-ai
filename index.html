@@ -15,6 +15,7 @@
   --serif:'Lora',Georgia,serif; --sans:'Source Sans 3',system-ui,sans-serif;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{margin:0;height:100%}
 body{background:var(--bg);font-family:var(--sans);color:var(--ink);display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}
 button{font:inherit;color:inherit;cursor:pointer}
@@ -196,9 +197,9 @@ h1,h2,h3{font-family:var(--serif);margin:0}
     <div class="scroll"><div class="home">
       <div class="brand"><div class="logo" aria-hidden="true">i</div><h1>Interpret</h1></div>
       <p class="tag">Snap a handwritten or printed page. I'll transcribe it, show you where I'm unsure, and you make the final call.</p>
-      <button class="lang-chip" id="langchip" aria-label="Your language: English">
+      <button class="lang-chip" id="langchip" aria-haspopup="dialog">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg>
-        I read: English
+        <span id="langlabel">I read: English</span>
       </button>
       <div class="capture">
         <button data-pick><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Take a photo</button>
@@ -207,11 +208,11 @@ h1,h2,h3{font-family:var(--serif);margin:0}
       <p class="sec-label">Sample documents</p>
       <button class="sample" data-doc="letter">
         <div class="thumb" aria-hidden="true"><span style="top:12px;right:20px"></span><span style="top:22px"></span><span style="top:32px"></span><span style="top:42px;right:14px"></span><span style="top:52px"></span><span style="top:62px;right:26px"></span></div>
-        <div><b>Letter to Margaret</b><small>English cursive · 1958 · family letter</small><span class="pill">Messy handwriting</span></div>
+        <div><b>Letter to Margaret</b><small>English cursive · 1958 · family letter</small><span class="pill" data-pill="letter"></span></div>
       </button>
       <button class="sample" data-doc="record">
         <div class="thumb" aria-hidden="true" style="background:#ecdfc2"><span style="top:12px"></span><span style="top:22px;right:18px"></span><span style="top:32px"></span><span style="top:42px"></span><span style="top:52px;right:30px"></span><span style="top:62px"></span></div>
-        <div><b>Baptism record, Kirchberg</b><small>German · 1891 · family history</small><span class="pill">Different language</span></div>
+        <div><b>Baptism record, Kirchberg</b><small>German · 1891 · family history</small><span class="pill" data-pill="record"></span></div>
       </button>
     </div></div>
   </section>
@@ -277,7 +278,7 @@ h1,h2,h3{font-family:var(--serif);margin:0}
 /* ---------- Sample data (simulated AI output) ---------- */
 const DOCS = {
   letter:{
-    title:"Letter to Margaret", lang:"English", font:"letter", translate:false,
+    title:"Letter to Margaret", lang:"English", code:"en", font:"letter",
     lines:[
       "Dear Margaret,",
       "Thank you for the lovely [quilt]. It",
@@ -294,7 +295,16 @@ const DOCS = {
       "[josephine]"
     ],
     paras:[0,1,11],
-    steps:["Finding lines of text","Reading the handwriting","Flagging words I'm unsure about"],
+    trans:{de:{
+      template:"Liebe Margaret,\nvielen Dank für die schöne {quilt}. Sie kam am Dienstag an, und {harold} sagt, es sei die schönste, die er je gesehen hat. Das Wetter hier war {bitter}, also kam sie genau zur richtigen Zeit. Die kleine {ellen} hat letzte Woche mit der Schule angefangen und liest schon besser als ihr Bruder. Bitte grüße Tante {ruth} herzlich von mir und sag ihr, dass das Rezept für den Apfelkuchen unterwegs ist.\nIn Liebe,\n{josephine}",
+      w:{
+        quilt:[["Steppdecke","…danke für die schöne <b>Steppdecke</b>"],["Schuld","…danke für die schöne <b>Schuld</b> (ergibt hier kaum Sinn)"],["Schreibfeder","…danke für die schöne <b>Schreibfeder</b>"]],
+        harold:[["Harold","…und <b>Harold</b> sagt, es sei die schönste (Name)"],["Howard","…und <b>Howard</b> sagt, es sei die schönste (Name)"],["Harald","…und <b>Harald</b> sagt, es sei die schönste (Name)"]],
+        bitter:[["bitterkalt","Das Wetter hier war <b>bitterkalt</b>"],["besser","Das Wetter hier war <b>besser</b>"],["Butter","Das Wetter hier war <b>Butter</b> (ergibt keinen Sinn)"]],
+        ellen:[["Ellen","Die kleine <b>Ellen</b> hat mit der Schule angefangen (Name)"],["Ellie","Die kleine <b>Ellie</b> hat mit der Schule angefangen (Name)"],["Allen","Der kleine <b>Allen</b> hat mit der Schule angefangen (Jungenname)"]],
+        ruth:[["Ruth","…grüße Tante <b>Ruth</b> von mir (Name)"],["Rita","…grüße Tante <b>Rita</b> von mir (Name)"],["Beth","…grüße Tante <b>Beth</b> von mir (Name)"]],
+        josephine:[["Josephine","In Liebe, <b>Josephine</b> (Name)"],["Josephina","In Liebe, <b>Josephina</b> (Name)"]]
+      }}},
     unc:{
       quilt:{ink:"quilt",why:"The first letter's loop could be a “q” or a “g”, and the last letter could be a “t” or an “l”.",
         alts:[{t:"quilt",p:.72},{t:"guilt",p:.18},{t:"quill",p:.10}]},
@@ -311,7 +321,7 @@ const DOCS = {
     }
   },
   record:{
-    title:"Baptism record, Kirchberg", lang:"German", font:"record", translate:true,
+    title:"Baptism record, Kirchberg", lang:"German", code:"de", font:"record",
     lines:[
       "Im Jahre 1891 am [d14] März",
       "wurde in [kirchberg] geboren",
@@ -323,7 +333,6 @@ const DOCS = {
       "Pate: Maria Schäfer aus [lindenau]."
     ],
     paras:[0,6,7],
-    steps:["Finding lines of text","Reading the handwriting","Detected German · translating to English","Flagging words I'm unsure about"],
     trTemplate:"In the year 1891, on the {d14} of March, Anna Maria Hoffmann was born in {kirchberg}, legitimate daughter of the {bauern} Johann Georg Hoffmann and his wife Katharina, née {weber}.\n{getauft} on 16 March.\nGodparent: Maria Schäfer from {lindenau}.",
     unc:{
       d14:{ink:"14.",why:"The second digit's stroke could be a 4, a 1, or a 7. Dates matter for family records, so check the photo.",
@@ -341,6 +350,12 @@ const DOCS = {
     }
   }
 };
+
+(()=>{ const r=DOCS.record, w={}; for(const id in r.unc) w[id]=r.unc[id].alts.map(a=>[a.tr,a.ctx]); r.trans={en:{template:r.trTemplate,w}}; })();
+const LANGS={en:{name:"English",native:"English"},de:{name:"German",native:"Deutsch"}};
+let userLang="en";
+const target=d=>(d.code!==userLang && d.trans && d.trans[userLang]) ? d.trans[userLang] : null;
+const needsTr=d=>d.code!==userLang;
 
 /* ---------- State ---------- */
 let doc=null, key=null, tokens=[], order=[], state={}, edits={}, tab="orig", sheetId=null, sel=null;
@@ -366,15 +381,28 @@ const level=id=>doc.unc[id].alts[0].p<0.6?"low":"med";
 const curText=id=>state[id].text;
 function wordText(t){ return t.unc ? t.pre+curText(t.id)+t.suf : (edits[t.id]??t.text); }
 function trFor(id){
-  const s=state[id], a=doc.unc[id].alts.find(a=>a.t===s.text);
-  return a?a.tr:`[${s.text}]`;
+  const s=state[id], i=doc.unc[id].alts.findIndex(a=>a.t===s.text);
+  return i>=0?target(doc).w[id][i][0]:`[${s.text}]`;
 }
 const pending=()=>order.filter(id=>!state[id].done);
 
 /* ---------- Home ---------- */
 $$("[data-doc]").forEach(b=>b.onclick=()=>start(b.dataset.doc));
 $$("[data-pick]").forEach(b=>b.onclick=()=>openPicker());
-$("#langchip").onclick=()=>toast("Language settings aren't part of this prototype");
+function renderHome(){
+  $("#langlabel").textContent="I read: "+LANGS[userLang].name;
+  $("#langchip").setAttribute("aria-label","Your language: "+LANGS[userLang].name+". Change language");
+  $$("[data-pill]").forEach(el=>{ const d=DOCS[el.dataset.pill];
+    el.textContent = needsTr(d) ? `Will translate to ${LANGS[userLang].name}` : "Messy handwriting"; });
+}
+$("#langchip").onclick=()=>{
+  openSheet("What language do you read?<small>If a document is in another language, I'll translate it into this one.</small>",
+    `<div class="opts" role="radiogroup" aria-label="Your language">${Object.entries(LANGS).map(([c,l])=>`
+      <button class="opt" role="radio" aria-checked="${c===userLang}" data-l="${c}"><div class="row"><span class="radio"></span><span class="word">${l.name}</span><span class="badge">${l.native}</span></div></button>`).join("")}
+      <p class="zcap" style="margin-top:4px">More languages in the full app.</p></div>`,"");
+  $$("[data-l]").forEach(b=>b.onclick=()=>{ userLang=b.dataset.l; renderHome(); closeSheet(); toast("Language set to "+LANGS[userLang].name); });
+};
+renderHome();
 
 function openPicker(){
   openSheet("Choose a document",
@@ -392,7 +420,10 @@ function start(k){
   const sb=$("#scanbox");
   sb.innerHTML=`<div class="scanline"></div>`+doc.lines.slice(0,9).map(l=>`<div style="font-family:${doc.font==='letter'?"'Cedarville Cursive'":"'Pinyon Script'"},cursive;white-space:nowrap">${esc(l.replace(/\[(\w+)\]/g,(_,id)=>doc.unc[id].ink))}</div>`).join("");
   $("#proc-title").textContent="Reading your document…";
-  const ul=$("#steps"); ul.innerHTML=doc.steps.map(s=>`<li><span class="dot"></span>${s}</li>`).join("");
+  const steps=["Finding lines of text","Reading the handwriting"];
+  if(target(doc)) steps.push(`Detected ${doc.lang} · translating to ${LANGS[userLang].name}`);
+  steps.push("Flagging words I'm unsure about");
+  const ul=$("#steps"); ul.innerHTML=steps.map(s=>`<li><span class="dot"></span>${s}</li>`).join("");
   show("s-proc");
   const lis=[...ul.children]; let i=0;
   const tick=()=>{
@@ -410,8 +441,10 @@ function start(k){
 function openReview(){
   $("#rv-title").textContent=doc.title;
   $("#doc").className="doc f-"+doc.font;
-  $("#tabs").hidden=!doc.translate;
-  $("#trnote").hidden=!doc.translate;
+  const tt=target(doc);
+  $("#tabs").hidden=!tt; $("#trnote").hidden=!tt;
+  if(tt){ $("#tabs [data-tab=orig]").textContent=`${doc.lang} (original)`; $("#tabs [data-tab=tr]").textContent=`${LANGS[userLang].name} translation`;
+    $$("#tabs button").forEach(x=>x.setAttribute("aria-selected",x.dataset.tab==="orig")); }
   renderDoc(); renderTx(); updateProgress();
   show("s-review");
 }
@@ -428,12 +461,13 @@ function cls(id){ const s=state[id]; return "w unc "+(s.done?"done":level(id)); 
 function aria(id){ const s=state[id]; return `${s.text}. ${s.done?"Reviewed":(level(id)==="low"?"Not sure":"Fairly sure")}. Tap to review.`; }
 function renderTx(){
   const tx=$("#tx");
-  if(doc.translate && tab==="tr"){
-    $("#trnote-t").textContent="Highlighted words come from spots you haven't reviewed yet. Tap one to compare the German options and their meanings.";
-    const parts=doc.trTemplate.split("\n").map(p=>esc(p).replace(/\{(\w+)\}/g,(_,id)=>`<button class="${cls(id)}" data-id="${id}" aria-label="${esc(aria(id))}">${esc(trFor(id))}</button>`));
+  const tt=target(doc);
+  if(tt && tab==="tr"){
+    $("#trnote-t").textContent=`Highlighted words come from spots you haven't reviewed yet. Tap one to compare the ${doc.lang} options and their meanings.`;
+    const parts=tt.template.split("\n").map(p=>esc(p).replace(/\{(\w+)\}/g,(_,id)=>`<button class="${cls(id)}" data-id="${id}" aria-label="${esc(aria(id))}">${esc(trFor(id))}</button>`));
     tx.innerHTML=parts.map(p=>`<p>${p}</p>`).join("");
   } else {
-    if(doc.translate) $("#trnote-t").textContent="This document is in German. When you check a word, you'll see each German option with its English meaning.";
+    if(tt) $("#trnote-t").textContent=`This document is in ${doc.lang}. When you check a word, you'll see each ${doc.lang} option with its ${LANGS[userLang].name} meaning.`;
     let html="", cur=-1;
     tokens.forEach(t=>{
       if(t.line!==cur){
@@ -501,12 +535,12 @@ function openWord(id){
   const isOwn=!u.alts.some(a=>a.t===s.text);
   sel = isOwn? "__own" : s.text;
   const lv=level(id);
-  const title=`${s.done?"Reviewed word":(lv==="low"?"I'm not sure about this word":"I'm fairly sure, but check")}<small>Word ${n} of ${order.length}${doc.translate?" · options in German with English meaning":""}</small>`;
+  const title=`${s.done?"Reviewed word":(lv==="low"?"I'm not sure about this word":"I'm fairly sure, but check")}<small>Word ${n} of ${order.length}${target(doc)?` · options in ${doc.lang} with ${LANGS[userLang].name} meaning`:""}</small>`;
   const opts=u.alts.map((a,i)=>`
     <button class="opt" role="radio" aria-checked="${sel===a.t}" data-v="${esc(a.t)}">
-      <div class="row"><span class="radio"></span><span class="word" lang="${doc.translate?'de':'en'}">${esc(a.t.replace(/\.$/,""))}</span>${i===0?'<span class="badge best">AI\'s best guess</span>':''}</div>
+      <div class="row"><span class="radio"></span><span class="word" lang="${doc.code}">${esc(a.t.replace(/\.$/,""))}</span>${i===0?'<span class="badge best">AI\'s best guess</span>':''}</div>
       <div class="conf"><span class="bar"><i style="width:${a.p*100}%"></i></span>${Math.round(a.p*100)}% likely</div>
-      ${doc.translate?`<div class="tr"><span class="lbl">In English</span>${a.ctx}</div>`:""}
+      ${target(doc)?`<div class="tr" lang="${userLang}"><span class="lbl">In ${LANGS[userLang].name}</span>${target(doc).w[id][i][1]}</div>`:""}
     </button>`).join("");
   const own=`<button class="opt own" role="radio" aria-checked="${isOwn}" data-v="__own">
       <div class="row"><span class="radio"></span><span class="word">None of these, I'll type it</span></div>
@@ -561,7 +595,7 @@ function plain(){
   tokens.forEach(t=>{ if(t.line!==cur){ if(cur>=0) out+= doc.paras.includes(t.line)?"\n\n":"\n"; cur=t.line;} else out+=" "; out+=wordText(t); });
   return out;
 }
-function plainTr(){ return doc.trTemplate.replace(/\{(\w+)\}/g,(_,id)=>trFor(id)); }
+function plainTr(){ return target(doc).template.replace(/\{(\w+)\}/g,(_,id)=>trFor(id)); }
 function finish(){
   const c={kept:0,changed:0,typed:0}; order.forEach(id=>c[state[id].how]++);
   const ne=Object.keys(edits).length;
@@ -574,8 +608,8 @@ function finish(){
       <div><b>${c.changed}</b><small>Times you picked another option</small></div>
       <div><b>${c.typed+ne}</b><small>Words you typed or fixed</small></div>
     </div>
-    <div class="card"><div class="hd"><b>${doc.lang} transcription</b><button data-copy="t">Copy</button></div><p lang="${doc.translate?'de':'en'}">${esc(plain())}</p></div>
-    ${doc.translate?`<div class="card"><div class="hd"><b>English translation</b><button data-copy="tr">Copy</button></div><p>${esc(plainTr())}</p></div>`:""}
+    <div class="card"><div class="hd"><b>${doc.lang} transcription</b><button data-copy="t">Copy</button></div><p lang="${doc.code}">${esc(plain())}</p></div>
+    ${target(doc)?`<div class="card"><div class="hd"><b>${LANGS[userLang].name} translation</b><button data-copy="tr">Copy</button></div><p lang="${userLang}">${esc(plainTr())}</p></div>`:""}
     <button class="btn soft" id="again" style="margin-bottom:10px">Keep editing</button>
     <button class="btn ghost" id="newdoc">Start a new document</button>`;
   $$("[data-copy]").forEach(b=>b.onclick=async()=>{
