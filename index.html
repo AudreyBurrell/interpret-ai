@@ -106,6 +106,7 @@ h1,h2,h3{font-family:var(--serif);margin:0}
 .bx{position:absolute;border:0;padding:0;background:transparent;border-radius:4px;box-shadow:0 0 0 2px var(--low)}
 .bx.med{box-shadow:none;outline:2px dashed var(--med)}
 .bx.done{box-shadow:0 0 0 2px var(--ok);outline:none}
+.bx.temp{box-shadow:none;outline:none}
 .bx.flash{background:rgba(58,143,216,.25);box-shadow:0 0 0 3px var(--focus)!important;outline:none}
 .docbar{display:flex;gap:6px;align-items:center;margin-top:8px;font-size:13px;color:#4d4033}
 .docbar span{flex:1}
@@ -296,12 +297,23 @@ const DOCS={
     title:"Journeyman's certificate", lang:"de", img:"images/certificate.jpg", iw:1600, ih:1359,
     meta:"German · Dresden, 1769 · printed and handwritten", tag:"Printed + handwritten",
     readStep:"Reading print and handwriting",
-    text:[
-      "Wir geschworne Vor- und andere Meister des Handwercks derer [huf]- und [waffen]schmiede in der Chur-Fürstl. Sächß. Residenz-Stadt Dreßden, bescheinigen, daß gegenwärtiger Geselle, mit Nahmen Christian [wagner], von Neustädtel bey [schneeberg] gebürtig, so [n25] Jahr alt und mittler Statur, auch [braunen] Haaren ist, bey Uns allhier [frac] Jahr in Arbeit gestanden und sich solche Zeit über treu, fleißig, still, friedsam und ehrlich, wie einem jeglichen Handwercks-Purschen gebühret, verhalten hat.",
-      "Welches Wir also attestiren und deshalb unsere sämtliche Mitmeister, diesen Gesellen nach Handwercks-Gebrauch überall zu fördern, geziemend ersuchen wollen. Dreßden, den [d26] Oct. 1769.",
-      "Ober-Meister: Christian [ziegel]",
-      "Ober-Meister: Christian Friedrich Naumann",
-      "Meister, wo der Geselle gearbeitet: Johann August [frohst]"
+    /* each line of the photo: t = its words, b = [left, right, top, bottom] in %, p = starts a paragraph.
+       ~n = n letters on the photo that belong to the previous line's word; word|n = word takes n letters' width here; ¶ = new paragraph mid-line */
+    lines:[
+      {p:1,b:[25,71,27.5,33.2],t:"Wir geschworne Vor- und"},
+      {b:[27,65.9,33.6,36],t:"andere Meister des Handwercks derer [huf]- und [waffen]schmiede"},
+      {b:[43.2,74.6,35.6,37.8],t:"in der Chur-Fürstl. Sächß. Residenz-Stadt Dreßden,"},
+      {b:[26,73.4,38.6,40.8],t:"bescheinigen, daß gegenwärtiger Geselle, mit Nahmen Christian [wagner],"},
+      {b:[29,72,40.7,42.8],t:"von Neustädtel bey [schneeberg] gebürtig, so [n25] Jahr alt und mittler"},
+      {b:[26,74.6,42.6,44.7],t:"Statur, auch [braunen] Haaren ist, bey Uns allhier [frac] Jahr|11 in Arbeit"},
+      {b:[26,74.8,44.8,47],t:"gestanden und sich solche Zeit über treu, fleißig, still, friedsam und ehrlich, wie einem"},
+      {b:[26,75,47.2,49.6],t:"jeglichen Handwercks-Purschen gebühret, verhalten hat. ¶ Welches Wir also attestiren|8"},
+      {b:[26.4,75.6,49.8,51.8],t:"~3 und deshalb unsere sämtliche Mitmeister, diesen Gesellen nach Handwercks-Gebrauch|13"},
+      {b:[26.4,75.6,51.9,53.9],t:"~6 überall zu fördern, geziemend ersuchen wollen. Dreßden, den [d26] Oct. 1769."},
+      {p:1,b:[26.2,45.6,53.9,56],t:"Ober-Meister: Christian [ziegel]"},
+      {p:1,b:[26.2,53,56.1,58.2],t:"Ober-Meister: Christian Friedrich Naumann"},
+      {p:1,b:[55.5,82.6,55.4,57.8],t:"Meister, wo der Geselle gearbeitet: Johann August"},
+      {b:[74.4,80.4,57.5,60.4],t:"[frohst]"}
     ],
     tpl:{
       en:"We, the sworn senior and other masters of the trade of the {huf} and {waffen} in the Electoral Saxon residence city of Dresden, certify that the present journeyman, named Christian {wagner}, born in Neustädtel near {schneeberg}, about {n25} years old, of medium build and with {braunen} hair, has worked with us here for {frac} and has conducted himself during this time faithfully, diligently, quietly, peaceably and honestly, as befits every journeyman of the trade.\nWe therefore attest this and respectfully ask all our fellow masters to support this journeyman everywhere according to the custom of the trade. Dresden, {d26} October 1769.\nSenior master: Christian {ziegel}\nSenior master: Christian Friedrich Naumann\nMaster with whom the journeyman worked: Johann August {frohst}",
@@ -351,9 +363,21 @@ const DOCS={
     title:"Commissioners' report", lang:"en", img:"images/commissioners.jpg", iw:1600, ih:2529,
     meta:"English cursive · 18th century · page 85", tag:"Cursive",
     readStep:"Reading the handwriting",
-    text:[
-      "We the Commissioners for the Western Department acting under the Authority of Congress, having in Obedience to our Instructions, [notice] being first given to all the neighbouring Counties, proceeded to an [inquiry] into the Conduct of Colonel George Morgan — Agent for Indian Affairs, and continued the same by [adjourn] from the twentieth to the [sixth] [instant]; do, after the clearest and most satisfactory Testimonies, wholly [acquit] the said Colonel George Morgan of the Charges against him, of [infidelity] in his publick Trust, and [disaffection] to the American Cause —",
-      "And we testify that we are [possest] of"
+    lines:[
+      {p:1,b:[22,90,43.2,46.8],t:"We the Commissioners for the Western Department"},
+      {b:[19.6,85.4,46.6,49.6],t:"acting under the Authority of Congress, having"},
+      {b:[19.8,87,49.8,52.2],t:"in Obedience to our Instructions, [notice] being"},
+      {b:[20.6,84.8,52.6,55.8],t:"first given to all the neighbouring Counties,"},
+      {b:[20,86.2,56.6,60],t:"proceeded to an [inquiry] into the Conduct of"},
+      {b:[20.6,89.8,60.2,63.2],t:"Colonel George Morgan — Agent for Indian"},
+      {b:[20.4,90,63.6,66.4],t:"Affairs, and continued the same by [adjourn]"},
+      {b:[21.2,90,66.8,69.7],t:"~5 from the twentieth to the [sixth]"},
+      {b:[21.2,89.8,70.8,73.4],t:"[instant]; do, after the clearest and most satisfactory|6"},
+      {b:[21.4,88,73.8,76.4],t:"~7 Testimonies, wholly [acquit] the said"},
+      {b:[22,90,77.4,80.4],t:"Colonel George Morgan of the Charges against"},
+      {b:[22.2,86.4,81,84],t:"him, of [infidelity] in his publick Trust,"},
+      {b:[23.3,90,85.2,87.6],t:"and [disaffection] to the American Cause —"},
+      {p:1,b:[23,86.6,88.6,91.8],t:"And we testify that we are [possest] of"}
     ],
     tpl:{
       de:"Wir, die Kommissare für das Westliche Departement, im Auftrag des Kongresses handelnd, haben gemäß unseren Anweisungen, nachdem allen benachbarten Grafschaften zuvor {notice} gegeben worden war, eine {inquiry} über das Verhalten von Oberst George Morgan, Beauftragter für Indianerangelegenheiten, durchgeführt und diese durch {adjourn} vom zwanzigsten bis zum {sixth} {instant} fortgesetzt. Nach den klarsten und überzeugendsten Zeugenaussagen {acquit} wir den genannten Oberst George Morgan vollständig von den Anklagen wegen {infidelity} in seinem öffentlichen Amt und wegen {disaffection} gegenüber der amerikanischen Sache.\nUnd wir bezeugen, dass wir {possest} …",
@@ -403,9 +427,16 @@ const DOCS={
     readStep:"Reading the handwriting",
     poor:{step:"Ink is very faded · reading it anyway", title:"The ink is very faded, so this is my best guess",
           body:"Many words may be wrong. If you can take a clearer photo, that will work better.", done:"Made from a faded photo. Double-check it before you rely on it."},
-    text:[
-      "Il faut [redemander] les variantes à M. [delcroix].",
-      "Il faut lui demander aussi s'il s'est occupé des variantes de l'histoire générale et des autres histoires. Des variantes [complettes] sont [inutiles], mais il y en a sur des faits importans qu'il faudra [recueillir]. Si ce travail n'est pas à [lille] on le fera ici et cela donnera peu de [peine]."
+    lines:[
+      {p:1,b:[13,88,18.6,21.6],t:"Il faut [redemander] les variantes à M."},
+      {b:[5.8,21.7,21.2,24.7],t:"[delcroix]."},
+      {p:1,b:[17,85.8,25.4,28.5],t:"Il faut lui demander aussi s'il s'est"},
+      {b:[9.2,92.5,29,31.5],t:"occupé des variantes de l'histoire générale"},
+      {b:[9.6,83.3,32.3,35.3],t:"et des autres histoires. Des variantes"},
+      {b:[9.2,90.8,35.9,38.6],t:"[complettes] sont [inutiles], mais il y en a sur"},
+      {b:[12.5,90.8,40.3,43.8],t:"des faits importans qu'il faudra [recueillir]."},
+      {b:[12.9,87,44.1,47.1],t:"Si ce travail n'est pas à [lille] on le fera ici"},
+      {b:[12.5,66.7,48,51.3],t:"et cela donnera peu de [peine]."}
     ],
     tpl:{
       en:"We must {redemander} the variants from M. {delcroix}.\nWe must also ask him whether he has dealt with the variants of the general history and of the other histories. {complettes} variants are {inutiles}, but there are some on important facts that we will need to {recueillir}. If this work is not in {lille}, we will do it here, and it will be {peine}.",
@@ -444,7 +475,7 @@ const DOCS={
 };
 
 /* ---------- State ---------- */
-let doc=null, tokens=[], state={}, edits={}, tab="orig", sel=null, userLang="en", zoomed=false;
+let doc=null, tokens=[], state={}, edits={}, trEdits={}, tab="orig", sel=null, userLang="en", zoomed=false;
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const needsTr=d=>d.lang!==userLang;
@@ -456,14 +487,46 @@ const tok=id=>tokens.find(t=>t.id===id);
 function show(id){ $$(".screen").forEach(s=>s.classList.toggle("on",s.id===id)); }
 function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("on"); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("on"),2000); }
 
+/* Turns the photo's lines into words. Uncertain words use their measured box; every other word's box is
+   estimated by spreading the words along the line between those measured boxes, by letter count. */
 function parse(d){
-  const out=[];
-  d.text.forEach((para,pi)=>para.split(" ").forEach((w,wi)=>{
-    const m=w.match(/^([^\[]*)\[(\w+)\](.*)$/);
-    if(m) out.push({para:pi,id:m[2],pre:m[1],suf:m[3],unc:true});
-    else out.push({para:pi,id:`w${pi}_${wi}`,text:w,unc:false});
+  const out=[]; let para=-1;
+  d.lines.forEach((ln,li)=>{
+    if(ln.p) para++;
+    ln.t.split(" ").forEach((w,wi)=>{
+      if(w==="¶"){ para++; return; }
+      const sp=w.match(/^~(\d+)$/); if(sp){ out.push({line:li,spacer:+sp[1]}); return; }
+      let wt=null; const mw=w.match(/^(.*)\|(\d+)$/); if(mw){ w=mw[1]; wt=+mw[2]; }
+      const mu=w.match(/^([^\[]*)\[(\w+)\](.*)$/);
+      if(mu) out.push({line:li,para,id:mu[2],pre:mu[1],suf:mu[3],unc:true});
+      else out.push({line:li,para,id:`w${li}_${wi}`,text:w,wt,unc:false});
+    });
+  });
+  const weight=t=>(t.spacer??t.wt??t.text.length)+1;
+  d.lines.forEach((ln,li)=>{
+    const [lx0,lx1,ly0,ly1]=ln.b; let from=lx0, seg=[];
+    const flush=to=>{ const tot=seg.reduce((a,t)=>a+weight(t),0); let x=from;
+      seg.forEach(t=>{ const w=(to-from)*weight(t)/tot; t.box=[x,ly0,x+w*(weight(t)-1)/weight(t),ly1]; x+=w; }); seg=[]; };
+    out.filter(t=>t.line===li).forEach(t=>{ if(t.unc){ const b=d.unc[t.id].box; flush(b[0]); t.box=b; from=b[2]; } else seg.push(t); });
+    flush(Math.max(from,lx1));
+  });
+  return out.filter(t=>!t.spacer);
+}
+const nParas=()=>Math.max(...tokens.map(t=>t.para))+1;
+/* translation split into words; {id} marks an uncertain word */
+function trTokens(){
+  return tpl().split("\n").map((par,p)=>par.split(" ").map((w,i)=>{
+    const m=w.match(/^([^{]*)\{(\w+)\}(.*)$/);
+    return m?{p,id:m[2],pre:m[1],suf:m[3]}:{p,tid:`t${p}_${i}`,text:w,i};
   }));
-  return out;
+}
+const trWord=t=>trEdits[t.tid]??t.text;
+/* a translated word can't be pinned to one spot, so estimate its line by position and show that line and its neighbours */
+function trRegion(t,count){
+  const ls=[...new Set(tokens.filter(x=>x.para===t.p).map(x=>x.line))];
+  const k=Math.round(t.i/Math.max(1,count-1)*(ls.length-1));
+  const pick=ls.slice(Math.max(0,k-1),k+2).map(l=>doc.lines[l].b);
+  return [Math.min(...pick.map(b=>b[0])),Math.min(...pick.map(b=>b[2])),Math.max(...pick.map(b=>b[1])),Math.max(...pick.map(b=>b[3]))];
 }
 function wordText(t){ return t.unc ? t.pre+state[t.id].text+t.suf : (edits[t.id]??t.text); }
 function trOf(id,i){ return doc.unc[id].alts[i].tr[userLang]; }
@@ -518,7 +581,7 @@ function runSteps(steps,done){
   tick();
 }
 function start(k){
-  doc=DOCS[k]; tokens=parse(doc); state={}; edits={}; tab="orig";
+  doc=DOCS[k]; tokens=parse(doc); state={}; edits={}; trEdits={}; tab="orig";
   tokens.filter(t=>t.unc).forEach(t=>state[t.id]={text:doc.unc[t.id].alts[0].t,done:false,how:null});
   $("#scanimg").src=doc.img;
   $("#proc-title").textContent="Reading your document…";
@@ -567,17 +630,21 @@ function renderTx(){
   if(doc.poor) html+=`<div class="poornote" role="note"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17v.5"/></svg><div><b>${doc.poor.title}</b>${doc.poor.body}</div></div>`;
   if(t && tab==="tr"){
     $("#trnote-t").textContent=`Highlighted words come from spots you haven't reviewed yet. Tap one to compare the ${LANGS[doc.lang].name} options and their meanings.`;
-    html+=t.split("\n").map(par=>`<p lang="${userLang}">`+esc(par).replace(/\{(\w+)\}/g,(_,id)=>`<button class="${cls(id)}" data-id="${id}" aria-label="${esc(aria(id))}">${esc(trFor(id))}</button>`)+`</p>`).join("");
+    $("#trnote-t").textContent+=" You can tap any other word to fix it.";
+    html+=trTokens().map(par=>`<p lang="${userLang}">`+par.map(x=> x.id
+      ? `${esc(x.pre)}<button class="${cls(x.id)}" data-id="${x.id}" aria-label="${esc(aria(x.id))}">${esc(trFor(x.id))}</button>${esc(x.suf)}`
+      : `<button class="w ${trEdits[x.tid]!=null?'edited':''}" tabindex="-1" data-tid="${x.tid}">${esc(trWord(x))}</button>`).join(" ")+`</p>`).join("");
   } else {
     if(t) $("#trnote-t").textContent=`This document is in ${LANGS[doc.lang].name}. When you check a word, you'll see each option with its ${LANGS[userLang].name} meaning.`;
-    doc.text.forEach((_,p)=>{
+    for(let p=0;p<nParas();p++){
       html+=`<p lang="${doc.lang}">`+tokens.filter(x=>x.para===p).map(x=> x.unc
         ? `${esc(x.pre)}<button class="${cls(x.id)}" data-id="${x.id}" aria-label="${esc(aria(x.id))}">${esc(state[x.id].text)}</button>${esc(x.suf)}`
         : `<button class="w ${edits[x.id]!=null?'edited':''}" tabindex="-1" data-id="${x.id}">${esc(wordText(x))}</button>`).join(" ")+`</p>`;
-    });
+    }
   }
   tx.innerHTML=html;
-  $$("#tx .w").forEach(b=>b.onclick=()=>openWord(b.dataset.id));
+  $$("#tx .w[data-id]").forEach(b=>b.onclick=()=>openWord(b.dataset.id));
+  $$("#tx .w[data-tid]").forEach(b=>b.onclick=()=>openTrEdit(b.dataset.tid));
 }
 function updateProgress(){
   const n=order().length, p=pending().length, d=n-p;
@@ -597,11 +664,13 @@ $("#docsize").onclick=e=>{ const big=$("#docwrap").classList.toggle("big"); e.ta
 $("#zoombtn").onclick=e=>{ zoomed=!zoomed; $("#imgwrap").classList.toggle("z2",zoomed); e.target.textContent=zoomed?"Zoom out":"Zoom in"; e.target.setAttribute("aria-pressed",zoomed); };
 
 /* link transcription <-> photo */
-function flash(id){
-  $$(".bx.flash").forEach(x=>x.classList.remove("flash")); $$(".w.active").forEach(x=>x.classList.remove("active"));
-  const b=$(`.bx[data-id="${id}"]`);
+function flash(id,box){
+  $$(".bx.flash").forEach(x=>x.classList.remove("flash")); $$(".w.active").forEach(x=>x.classList.remove("active")); $$(".bx.temp").forEach(x=>x.remove());
+  let b=id?$(`.bx[data-id="${id}"]`):null;
+  if(!b && box){ b=document.createElement("div"); b.className="bx temp"; b.setAttribute("aria-hidden","true");
+    b.style.cssText=`left:${box[0]}%;top:${box[1]}%;width:${box[2]-box[0]}%;height:${box[3]-box[1]}%;pointer-events:none`; $("#imgwrap").appendChild(b); }
   if(b){ b.classList.add("flash"); const d=$("#doc"); d.scrollTo({top:b.offsetTop-d.clientHeight/2+b.offsetHeight/2,left:Math.max(0,b.offsetLeft-d.clientWidth/2+b.offsetWidth/2),behavior:"smooth"}); $("#rv-scroll").scrollTo({top:0,behavior:"smooth"}); }
-  $$(`#tx .w[data-id="${id}"]`).forEach(x=>x.classList.add("active"));
+  if(id) $$(`#tx .w[data-id="${id}"]`).forEach(x=>x.classList.add("active"));
 }
 
 /* ---------- Sheet ---------- */
@@ -613,24 +682,24 @@ function openSheet(title,body,foot){
 }
 function closeSheet(){
   $("#scrim").classList.remove("on"); $("#sheet").classList.remove("on");
-  $$(".bx.flash").forEach(x=>x.classList.remove("flash")); $$(".w.active").forEach(x=>x.classList.remove("active"));
+  $$(".bx.flash").forEach(x=>x.classList.remove("flash")); $$(".w.active").forEach(x=>x.classList.remove("active")); $$(".bx.temp").forEach(x=>x.remove());
 }
 $("#scrim").onclick=closeSheet; $("#sh-close").onclick=closeSheet;
 document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&$("#sheet").classList.contains("on")) closeSheet(); });
 
 /* zoomed crop of the real photo around a word */
-function zoomHTML(id){
-  return `<div class="zoom" data-z="${id}" aria-hidden="true"><img src="${doc.img}" alt=""><div class="zb"></div></div><p class="zcap">Zoomed in from your photo</p>`;
+function zoomHTML(box,region,cap){
+  return `<div class="zoom" data-box="${box.join(",")}" data-region="${region?1:""}" aria-hidden="true"><img src="${doc.img}" alt=""><div class="zb"></div></div><p class="zcap">${cap||"Zoomed in from your photo"}</p>`;
 }
 function layoutZoom(){
   const z=$("#sh-body .zoom"); if(!z) return;
-  const [x0,y0,x1,y1]=doc.unc[z.dataset.z].box, cw=z.clientWidth;
-  const bw=x1-x0, bh=(y1-y0)*doc.ih/doc.iw;               // box size in "width %" units
-  const regW=Math.max(bw*2.6, 22);                         // show some context around the word
+  const [x0,y0,x1,y1]=z.dataset.box.split(",").map(Number), cw=z.clientWidth, region=!!z.dataset.region;
+  const bw=x1-x0;
+  const regW=region? Math.min(100,bw+6) : Math.max(bw*2.6, 22); // show some context around the word
   const scale=cw/(regW/100*doc.iw);                        // px per image px
   const dispW=doc.iw*scale, dispH=doc.ih*scale;
   const cx=(x0+x1)/2/100*dispW, cy=(y0+y1)/2/100*dispH;
-  const ch=Math.min(140, Math.max(84, (y1-y0)/100*dispH*2.6));
+  const ch=region? Math.min(190, Math.max(90,(y1-y0)/100*dispH+24)) : Math.min(140, Math.max(84, (y1-y0)/100*dispH*2.6));
   z.style.height=ch+"px";
   const left=Math.min(0,Math.max(cw-dispW, cw/2-cx)), top=Math.min(0,Math.max(ch-dispH, ch/2-cy));
   const img=z.querySelector("img"); img.style.width=dispW+"px"; img.style.left=left+"px"; img.style.top=top+"px";
@@ -638,8 +707,8 @@ function layoutZoom(){
 }
 
 function openWord(id){
-  flash(id);
   const t=tok(id);
+  flash(id,t.box);
   if(!t.unc) return openEdit(t);
   const u=doc.unc[id], s=state[id], ord=order(), n=ord.indexOf(id)+1, tt=needsTr(doc);
   const isOwn=!u.alts.some(a=>a.t===s.text);
@@ -656,7 +725,7 @@ function openWord(id){
       <div class="own-in"><input id="ownin" aria-label="Type the correct word" placeholder="Type what it says" value="${isOwn?esc(s.text):""}"></div>
     </button>`;
   openSheet(title,
-    `${zoomHTML(id)}
+    `${zoomHTML(u.box)}
      <div class="why"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17v.5"/></svg><div><b>Why I'm unsure:</b> ${u.why}</div></div>
      <div class="opts" role="radiogroup" aria-label="Possible readings">${opts}${own}</div>`,
     `<button class="btn ghost" id="skip">${nextAfter(id)?"Skip for now":"Cancel"}</button><button class="btn primary" id="confirm">Confirm</button>`);
@@ -686,23 +755,40 @@ function confirmWord(id){
   if(nx) setTimeout(()=>openWord(nx),250);
   else { closeSheet(); setTimeout(()=>toast("All words reviewed. Tap Finish when ready."),400); }
 }
-function openEdit(t){
-  const cur=edits[t.id]??t.text;
-  openSheet(`Edit this word<small>I was confident here, but you can still fix it</small>`,
-    `<label class="sr" for="editin">Word</label><input class="edit-in" id="editin" value="${esc(cur)}">`,
+/* shared popup: photo crop + a field to type the word */
+function typeSheet(title,sub,box,region,cap,cur,orig,saveFn){
+  openSheet(`${title}<small>${sub}</small>`,
+    `${zoomHTML(box,region,cap)}
+     <label for="editin" style="display:block;font-weight:600;font-size:14.5px;margin:4px 0 6px">What do you think it says?</label>
+     <input class="edit-in" id="editin" value="${esc(cur)}" autocomplete="off" spellcheck="false">
+     ${cur!==orig?`<p class="zcap" style="text-align:left;margin-top:6px">I originally read: “${esc(orig)}”</p>`:""}`,
     `<button class="btn ghost" id="ecancel">Cancel</button><button class="btn primary" id="esave">Save</button>`);
+  requestAnimationFrame(layoutZoom); $("#sh-body .zoom img").onload=layoutZoom;
   setTimeout(()=>$("#editin").select(),330);
   $("#ecancel").onclick=closeSheet;
-  const save=()=>{ const v=$("#editin").value.trim(); if(!v) return; if(v!==t.text) edits[t.id]=v; else delete edits[t.id]; closeSheet(); renderTx(); toast("Word updated"); };
+  const save=()=>{ const v=$("#editin").value.trim(); if(!v) return; saveFn(v); closeSheet(); renderTx(); toast(v===orig?"Back to the original reading":`Saved “${v}”`); };
   $("#esave").onclick=save; $("#editin").onkeydown=e=>{if(e.key==="Enter")save();};
+}
+function openEdit(t){
+  typeSheet("Edit this word","I was fairly confident here, but you can still fix it",t.box,false,
+    "Zoomed in from your photo · the box shows roughly where the word is",
+    edits[t.id]??t.text, t.text, v=>{ if(v!==t.text) edits[t.id]=v; else delete edits[t.id]; });
+}
+function openTrEdit(tid){
+  const all=trTokens(), par=all.find(p=>p.some(x=>x.tid===tid)), t=par.find(x=>x.tid===tid);
+  const box=trRegion(t,par.length);
+  flash(null,box);
+  typeSheet("Edit this translated word",`Translations don't match the original word-for-word, so the photo shows the lines this most likely comes from`,
+    box,true,`Your photo · lines this part of the ${LANGS[userLang].name} translation comes from`,
+    trWord(t), t.text, v=>{ if(v!==t.text) trEdits[tid]=v; else delete trEdits[tid]; });
 }
 
 /* ---------- Finish ---------- */
-function plain(){ return doc.text.map((_,p)=>tokens.filter(x=>x.para===p).map(wordText).join(" ")).join("\n\n"); }
-function plainTr(){ return tpl().replace(/\{(\w+)\}/g,(_,id)=>trFor(id)).split("\n").join("\n\n"); }
+function plain(){ return [...Array(nParas()).keys()].map(p=>tokens.filter(x=>x.para===p).map(wordText).join(" ")).join("\n\n"); }
+function plainTr(){ return trTokens().map(par=>par.map(x=>x.id?x.pre+trFor(x.id)+x.suf:trWord(x)).join(" ")).join("\n\n"); }
 function finish(){
   const c={kept:0,changed:0,typed:0}; order().forEach(id=>c[state[id].how]++);
-  const ne=Object.keys(edits).length, tt=needsTr(doc);
+  const ne=Object.keys(edits).length+Object.keys(trEdits).length, tt=needsTr(doc);
   $("#fin").innerHTML=`
     <div class="ok"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 12.5l4.5 4.5L19 7"/></svg></div>
     <h2>Nice work</h2>
