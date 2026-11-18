@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Interpret AI — Prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Cedarville+Cursive&family=Pinyon+Script&family=Homemade+Apple&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#ece6db; --surface:#fffdf9; --paper:#f3e9d2; --ink:#2a2420; --muted:#6d625a; --line:#e2d9cb;
   --accent:#1f5f5b; --accent-ink:#fff; --accent-soft:#e2efed;
   --low:#b4462f; --low-soft:#fbe6df; --med:#9a6a00; --med-soft:#fbf0d2;
-  --ok:#2f7a4a; --ok-soft:#e1f1e6;
+  --ok:#2f7a4a; --ok-soft:#e1f1e6; --focus:#3a8fd8;
   --serif:'Lora',Georgia,serif; --sans:'Source Sans 3',system-ui,sans-serif;
 }
 *{box-sizing:border-box}
@@ -21,7 +21,6 @@ body{background:var(--bg);font-family:var(--sans);color:var(--ink);display:flex;
 button{font:inherit;color:inherit;cursor:pointer}
 .phone{width:390px;height:844px;max-height:calc(100vh - 48px);background:var(--surface);border-radius:44px;box-shadow:0 0 0 10px #1d1a18,0 30px 60px rgba(0,0,0,.25);position:relative;overflow:hidden;display:flex;flex-direction:column;padding-top:20px}
 @media (max-width:500px){body{padding:0}.phone{width:100%;height:100vh;max-height:none;border-radius:0;box-shadow:none}}
-
 .screen{flex:1;display:none;flex-direction:column;min-height:0}
 .screen.on{display:flex}
 .scroll{flex:1;overflow-y:auto;min-height:0}
@@ -31,33 +30,52 @@ h1,h2,h3{font-family:var(--serif);margin:0}
 .btn.primary:disabled{background:#b9c9c7;cursor:not-allowed}
 .btn.ghost{background:transparent;border:1.5px solid var(--line)}
 .btn.soft{background:var(--accent-soft);color:var(--accent)}
-:focus-visible{outline:3px solid #3a8fd8;outline-offset:2px}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
 .icon{width:20px;height:20px;flex:none}
+.sec-label{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
 
 /* home */
 .home{padding:8px 24px 24px}
 .brand{display:flex;align-items:center;gap:10px;margin:8px 0 12px}
 .logo{width:40px;height:40px;border-radius:12px;background:var(--accent);display:grid;place-items:center;color:#fff;font-family:var(--serif);font-weight:700;font-size:22px}
 .home h1{font-size:28px}
-.tag{color:var(--muted);margin:4px 0 20px;line-height:1.4}
-.lang-chip{display:inline-flex;align-items:center;gap:6px;background:var(--accent-soft);color:var(--accent);font-weight:600;font-size:14px;padding:6px 12px;border-radius:999px;margin-bottom:20px;border:0}
-.capture{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px}
-.capture button{background:var(--surface);border:1.5px dashed #cdbfa9;border-radius:18px;padding:22px 10px;display:flex;flex-direction:column;align-items:center;gap:8px;font-weight:600}
-.capture button .icon{width:28px;height:28px;color:var(--accent)}
-.sec-label{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
-.sample{display:flex;gap:14px;align-items:center;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:12px}
-.thumb{width:64px;height:80px;border-radius:8px;background:var(--paper);flex:none;overflow:hidden;position:relative;box-shadow:inset 0 0 12px rgba(120,90,40,.25)}
-.thumb span{position:absolute;left:6px;right:6px;height:2px;background:#6b5a46;opacity:.45;border-radius:2px}
+.tag{color:var(--muted);margin:4px 0 22px;line-height:1.4}
+.langcard{border:1.5px solid var(--line);border-radius:18px;padding:14px 14px 12px;margin-bottom:22px;background:#fbf8f2}
+.langcard .hd{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.langcard .hd .icon{color:var(--accent)}
+.langcard .hd b{font-size:16.5px}
+.langcard p{margin:0 0 12px;color:var(--muted);font-size:14px;line-height:1.35}
+.langs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lang{border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 12px;text-align:left;display:flex;align-items:center;gap:10px}
+.lang .nm{flex:1;min-width:0}
+.lang b{display:block;font-size:15.5px}
+.lang small{display:block;color:var(--muted);font-size:12.5px}
+.lang .chk{width:20px;height:20px;border-radius:50%;border:2px solid #c6bba9;flex:none;display:grid;place-items:center;color:#fff;font-size:12px;font-weight:700}
+.lang[aria-checked=true]{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 0 0 1px var(--accent)}
+.lang[aria-checked=true] .chk{background:var(--accent);border-color:var(--accent)}
+.lang:disabled{cursor:not-allowed;background:#f6f3ee;color:#8c8178}
+.lang:disabled b{color:#8c8178}
+.lang:disabled .chk{border-color:#ddd5c8}
+.soon{display:inline-block;font-size:11px;font-weight:700;padding:1px 6px;border-radius:999px;background:#ece6dc;color:var(--muted);margin-top:2px}
+.capture{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.capture button{background:var(--surface);border:1.5px dashed #cdbfa9;border-radius:18px;padding:26px 10px;display:flex;flex-direction:column;align-items:center;gap:8px;font-weight:600}
+.capture button .icon{width:30px;height:30px;color:var(--accent)}
+.sample{display:flex;gap:14px;align-items:center;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:10px;margin-bottom:10px}
+.sample img{width:60px;height:76px;border-radius:8px;object-fit:cover;object-position:top;flex:none;background:var(--paper)}
 .sample b{display:block;font-size:16px;margin-bottom:2px}
 .sample small{color:var(--muted);font-size:13.5px;line-height:1.35;display:block}
-.pill{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--med-soft);color:var(--med);margin-top:6px}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--med-soft);color:var(--med);margin:6px 4px 0 0}
+.pill.tr{background:var(--accent-soft);color:var(--accent)}
+.notimpl{display:flex;gap:10px;background:#f5f1ea;border-radius:12px;padding:10px 12px;font-size:14.5px;line-height:1.4;margin-bottom:14px}
+.notimpl .icon{color:var(--muted);margin-top:1px}
 
 /* processing */
 .proc{padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1}
-.scanbox{width:220px;height:280px;border-radius:12px;background:var(--paper);position:relative;overflow:hidden;box-shadow:0 10px 30px rgba(80,60,30,.2);margin-bottom:28px;padding:18px 14px;font-size:15px;line-height:1.7;color:#3b2f25}
-.scanbox .scanline{position:absolute;left:0;right:0;height:46px;background:linear-gradient(to bottom,transparent,rgba(31,95,91,.28),transparent);animation:scan 1.6s ease-in-out infinite alternate;top:0}
-@keyframes scan{from{transform:translateY(-20px)}to{transform:translateY(260px)}}
-@media (prefers-reduced-motion:reduce){.scanbox .scanline{animation:none;top:40%}}
+.scanbox{width:220px;height:270px;border-radius:12px;background:var(--paper);position:relative;overflow:hidden;box-shadow:0 10px 30px rgba(80,60,30,.2);margin-bottom:28px}
+.scanbox img{width:100%;height:100%;object-fit:cover;object-position:top}
+.scanline{position:absolute;left:0;right:0;height:46px;background:linear-gradient(to bottom,transparent,rgba(31,95,91,.35),transparent);animation:scan 1.6s ease-in-out infinite alternate;top:0}
+@keyframes scan{from{transform:translateY(-20px)}to{transform:translateY(250px)}}
+@media (prefers-reduced-motion:reduce){.scanline{animation:none;top:40%}}
 .steps{list-style:none;padding:0;margin:0;width:100%;max-width:300px}
 .steps li{display:flex;align-items:center;gap:10px;padding:8px 0;color:var(--muted);font-size:15.5px}
 .steps li .dot{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);flex:none;display:grid;place-items:center}
@@ -66,6 +84,8 @@ h1,h2,h3{font-family:var(--serif);margin:0}
 @keyframes spin{to{transform:rotate(360deg)}}
 .steps li.done{color:var(--ink)}
 .steps li.done .dot{background:var(--accent);border-color:var(--accent);color:#fff}
+.steps li.warn{color:var(--low);font-weight:600}
+.steps li.warn .dot{background:var(--low);border-color:var(--low);color:#fff;font-weight:700;font-size:13px}
 .proc h2{font-size:21px;margin-bottom:14px;text-align:center}
 
 /* review */
@@ -77,37 +97,30 @@ h1,h2,h3{font-family:var(--serif);margin:0}
 .topbar .t small{color:var(--muted);font-size:13px}
 .progress{height:6px;background:var(--line);border-radius:6px;overflow:hidden;margin-top:5px}
 .progress i{display:block;height:100%;background:var(--accent);width:0;transition:width .4s}
-
-.docwrap{margin:0 14px;border-radius:14px;background:#d9cdb6;padding:10px;position:relative;flex:none}
-.doc{height:200px;overflow:auto;border-radius:6px;background:var(--paper);background-image:radial-gradient(ellipse at 20% 10%,rgba(255,255,255,.5),transparent 60%),radial-gradient(ellipse at 90% 90%,rgba(140,100,40,.18),transparent 55%);padding:16px 18px;color:#3a2c1f;transition:height .3s}
-.docwrap.big .doc{height:420px}
-.doc .hl{line-height:1.55;white-space:nowrap}
-.doc.f-letter{font-family:'Cedarville Cursive',cursive;font-size:22px}
-.doc.f-record{font-family:'Pinyon Script',cursive;font-size:25px}
-.doc .hl:nth-child(odd){transform:rotate(-.6deg)}
-.doc .hl:nth-child(3n){transform:rotate(.5deg) translateX(4px)}
-.dw{border-radius:4px;padding:0 2px;cursor:pointer;transition:background .2s,box-shadow .2s}
-.dw.unc{box-shadow:0 0 0 2px var(--low)}
-.dw.unc.med{box-shadow:0 0 0 2px dashed var(--med);outline:2px dashed var(--med);outline-offset:0;box-shadow:none}
-.dw.unc.done{box-shadow:0 0 0 2px rgba(47,122,74,.55);outline:none}
-.dw.flash{background:rgba(58,143,216,.3);box-shadow:0 0 0 3px #3a8fd8!important;outline:none}
-.docbar{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:13px;color:#4d4033}
-.docbar button{border:0;background:rgba(255,255,255,.55);border-radius:8px;padding:5px 10px;font-weight:600;font-size:13px}
-
+.docwrap{margin:0 14px;border-radius:14px;background:#d9cdb6;padding:10px;flex:none}
+.doc{height:230px;overflow:auto;border-radius:6px;background:var(--paper);transition:height .3s;position:relative}
+.docwrap.big .doc{height:440px}
+.imgwrap{position:relative;width:100%}
+.imgwrap.z2{width:250%}
+.imgwrap img{display:block;width:100%;height:auto}
+.bx{position:absolute;border:0;padding:0;background:transparent;border-radius:4px;box-shadow:0 0 0 2px var(--low)}
+.bx.med{box-shadow:none;outline:2px dashed var(--med)}
+.bx.done{box-shadow:0 0 0 2px var(--ok);outline:none}
+.bx.flash{background:rgba(58,143,216,.25);box-shadow:0 0 0 3px var(--focus)!important;outline:none}
+.docbar{display:flex;gap:6px;align-items:center;margin-top:8px;font-size:13px;color:#4d4033}
+.docbar span{flex:1}
+.docbar button{border:0;background:rgba(255,255,255,.6);border-radius:8px;padding:5px 10px;font-weight:600;font-size:13px}
 .legend{display:flex;gap:14px;flex-wrap:wrap;padding:12px 18px 4px;font-size:13px;color:var(--muted)}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .sw{display:inline-block;width:22px;height:0;border-bottom:3px solid}
-.sw.low{border-bottom:3px wavy var(--low);height:6px;border-bottom-style:wavy}
 .sw.med{border-color:var(--med);border-bottom-style:dotted}
 .sw.ok{border-color:var(--ok)}
-
 .tabs{display:flex;margin:10px 14px 0;background:#efe8dc;border-radius:12px;padding:4px}
 .tabs button{flex:1;border:0;background:transparent;padding:8px;border-radius:9px;font-weight:600;font-size:14.5px;color:var(--muted)}
 .tabs button[aria-selected=true]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
 .trnote{margin:10px 18px 0;font-size:13.5px;color:var(--muted);display:flex;gap:8px;align-items:flex-start;line-height:1.35}
-
 .tx{padding:12px 18px 24px;font-size:17px;line-height:2}
-.tx p{margin:0}
+.tx p{margin:0 0 10px}
 .w{border:0;background:transparent;padding:0 1px;margin:0;border-radius:4px;font-size:inherit;line-height:inherit}
 .w:hover{background:#f1ece3}
 .w.unc{font-weight:600;padding:0 3px}
@@ -116,15 +129,17 @@ h1,h2,h3{font-family:var(--serif);margin:0}
 .w.done{background:var(--ok-soft);color:#1f5a35;text-decoration:underline solid var(--ok);text-underline-offset:5px;text-decoration-thickness:1.5px}
 .w.done::after{content:"✓";font-size:12px;margin-left:2px;vertical-align:super}
 .w.edited{text-decoration:underline solid #8a7d70;text-underline-offset:5px}
-.w.active{box-shadow:0 0 0 2px #3a8fd8}
-
-.bottombar{flex:none;padding:12px 16px 18px;border-top:1px solid var(--line);background:var(--surface);display:flex;gap:10px}
+.w.active{box-shadow:0 0 0 2px var(--focus)}
+.poornote{display:flex;gap:10px;background:var(--med-soft);border:1.5px solid #ecd28c;border-radius:14px;padding:12px 14px;font-size:14.5px;line-height:1.4;margin-bottom:12px}
+.poornote .icon{color:var(--med);margin-top:2px}
+.poornote b{display:block;color:#6a4900;margin-bottom:2px}
+.bottombar{flex:none;padding:12px 16px 18px;border-top:1px solid var(--line);background:var(--surface);display:flex;flex-direction:column;gap:8px}
 .bottombar .btn{padding:13px}
 
 /* sheet */
 .scrim{position:absolute;inset:0;background:rgba(30,22,15,.35);opacity:0;pointer-events:none;transition:opacity .25s;z-index:10}
 .scrim.on{opacity:1;pointer-events:auto}
-.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-radius:24px 24px 0 0;z-index:11;transform:translateY(105%);transition:transform .3s cubic-bezier(.2,.8,.2,1);max-height:86%;display:flex;flex-direction:column}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-radius:24px 24px 0 0;z-index:11;transform:translateY(105%);transition:transform .3s cubic-bezier(.2,.8,.2,1);max-height:88%;display:flex;flex-direction:column}
 .sheet.on{transform:none}
 @media (prefers-reduced-motion:reduce){.sheet,.scrim{transition:none}}
 .grab{width:40px;height:5px;border-radius:5px;background:#d6cdbf;margin:8px auto 2px}
@@ -132,16 +147,14 @@ h1,h2,h3{font-family:var(--serif);margin:0}
 .sh-head h3{flex:1;font-size:18px}
 .sh-head small{display:block;font-family:var(--sans);font-weight:500;color:var(--muted);font-size:13px;margin-top:1px}
 .sh-body{overflow-y:auto;padding:4px 20px 12px}
-.zoom{background:var(--paper);border-radius:12px;padding:14px;margin-bottom:10px;box-shadow:inset 0 0 18px rgba(120,90,40,.2);text-align:center;white-space:nowrap;overflow:hidden;color:#3a2c1f}
-.zoom .ctx{opacity:.4}
-.zoom .z{padding:0 6px;border-radius:6px;box-shadow:0 0 0 2px #3a8fd8;background:rgba(58,143,216,.12)}
-.zoom.f-letter{font-family:'Cedarville Cursive',cursive;font-size:30px}
-.zoom.f-record{font-family:'Pinyon Script',cursive;font-size:32px}
-.zcap{font-size:12px;color:var(--muted);margin:-4px 0 10px;text-align:center}
+.zoom{position:relative;overflow:hidden;border-radius:12px;background:var(--paper);margin-bottom:6px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
+.zoom img{position:absolute;max-width:none}
+.zoom .zb{position:absolute;border-radius:5px;box-shadow:0 0 0 2.5px var(--focus);background:rgba(58,143,216,.1)}
+.zcap{font-size:12px;color:var(--muted);margin:0 0 10px;text-align:center}
 .why{display:flex;gap:8px;background:#f5f1ea;border-radius:10px;padding:10px 12px;font-size:14px;line-height:1.4;margin-bottom:14px}
 .why .icon{color:var(--med);margin-top:1px}
 .opts{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
-.opt{display:block;width:100%;text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:12px 14px;position:relative}
+.opt{display:block;width:100%;text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:12px 14px}
 .opt[aria-checked=true]{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 0 0 1px var(--accent)}
 .opt .row{display:flex;align-items:center;gap:10px}
 .radio{width:20px;height:20px;border-radius:50%;border:2px solid #b9ad9d;flex:none;display:grid;place-items:center}
@@ -156,6 +169,7 @@ h1,h2,h3{font-family:var(--serif);margin:0}
 .opt .tr{margin:8px 0 0 30px;padding-top:8px;border-top:1px dashed var(--line);font-size:14.5px;line-height:1.4}
 .opt .tr .lbl{display:block;font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:1px}
 .opt .tr b{background:#fff3b8;border-radius:3px;padding:0 2px}
+.opt .tr i{color:var(--muted)}
 .opt.own .word{font-weight:500;color:var(--muted);font-size:16px}
 .own-in{margin:10px 0 0 30px;display:none}
 .opt.own[aria-checked=true] .own-in{display:block}
@@ -164,18 +178,14 @@ h1,h2,h3{font-family:var(--serif);margin:0}
 .sh-foot{display:flex;gap:10px;padding:10px 20px 20px;border-top:1px solid var(--line)}
 .sh-foot .btn{padding:13px}
 .sh-foot .btn.ghost{flex:0 0 38%}
-
-.toast{position:absolute;left:50%;bottom:96px;transform:translate(-50%,20px);background:#2a2420;color:#fff;padding:10px 16px;border-radius:12px;font-size:14.5px;opacity:0;transition:.25s;z-index:20;pointer-events:none;white-space:nowrap}
+.toast{position:absolute;left:50%;bottom:120px;transform:translate(-50%,20px);background:#2a2420;color:#fff;padding:10px 16px;border-radius:12px;font-size:14.5px;opacity:0;transition:.25s;z-index:20;pointer-events:none;white-space:nowrap}
 .toast.on{opacity:1;transform:translate(-50%,0)}
-
-/* picker */
-.pick p{color:var(--muted);font-size:15px;line-height:1.4;margin:0 0 14px}
 
 /* finish */
 .fin{padding:12px 20px 24px}
 .fin .ok{width:64px;height:64px;border-radius:50%;background:var(--ok-soft);color:var(--ok);display:grid;place-items:center;margin:8px auto 12px}
 .fin h2{text-align:center;font-size:24px}
-.fin .sub{text-align:center;color:var(--muted);margin:6px 0 18px}
+.fin .sub{text-align:center;color:var(--muted);margin:6px 0 18px;line-height:1.4}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px}
 .stats div{background:#f5f1ea;border-radius:12px;padding:10px 6px;text-align:center}
 .stats b{display:block;font-size:22px;font-family:var(--serif)}
@@ -186,59 +196,6 @@ h1,h2,h3{font-family:var(--serif);margin:0}
 .card .hd button{border:0;background:var(--accent-soft);color:var(--accent);font-weight:600;font-size:13.5px;border-radius:9px;padding:6px 12px}
 .card p{margin:0 0 6px;line-height:1.55;font-size:15.5px;white-space:pre-wrap}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
-
-.doc.f-journal{font-family:'Homemade Apple',cursive;font-size:17px}
-.doc .hl.journal{line-height:2}
-.zoom.f-journal{font-family:'Homemade Apple',cursive;font-size:24px}
-.steps li.warn{color:var(--low);font-weight:600}
-.steps li.warn .dot{background:var(--low);border-color:var(--low);color:#fff;font-weight:700;font-size:13px}
-
-/* pages */
-.pages{display:flex;gap:6px;margin-bottom:8px;overflow-x:auto}
-.pages button{border:0;background:rgba(255,255,255,.5);border-radius:9px;padding:6px 10px;font-size:13px;font-weight:600;color:#4d4033;display:flex;align-items:center;gap:6px;white-space:nowrap}
-.pages button[aria-pressed=true]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
-.pages .st{font-weight:700;font-size:11.5px;padding:1px 6px;border-radius:999px}
-.pages .st.todo{background:var(--med-soft);color:var(--med)}
-.pages .st.ok{background:var(--ok-soft);color:var(--ok)}
-.pages .st.bad{background:var(--low-soft);color:var(--low)}
-.docstage{position:relative}
-.doc.blurry .hl{filter:blur(2.6px);opacity:.85}
-.blurmsg{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:16px;background:rgba(243,233,210,.55);border-radius:6px}
-.blurmsg b{font-size:15.5px}
-.blurmsg .btn{width:auto;padding:10px 16px;font-size:15px}
-.pghead{font-family:var(--sans);font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:14px 0 2px;display:flex;align-items:center;gap:8px}
-.pghead:first-child{margin-top:0}
-.pghead::after{content:"";flex:1;height:1px;background:var(--line)}
-.skipcard{border:1.5px dashed #e0b4a8;background:var(--low-soft);border-radius:14px;padding:12px 14px;line-height:1.4;font-size:15px;margin:4px 0}
-.skipcard b{display:block;color:#7d2817;margin-bottom:2px}
-.skipcard .btn{margin-top:10px;padding:10px;font-size:15px}
-.bottombar.two{flex-direction:column;gap:8px}
-
-/* error */
-.err{padding:4px 22px 20px}
-.err .warnicon{width:56px;height:56px;border-radius:50%;background:var(--low-soft);color:var(--low);display:grid;place-items:center;margin:6px auto 12px}
-.err h2{text-align:center;font-size:22px;line-height:1.25}
-.err .sub{text-align:center;color:var(--muted);margin:8px 0 16px;line-height:1.45}
-.strip{display:flex;justify-content:center;gap:12px;margin-bottom:16px}
-.strip figure{margin:0;text-align:center;font-size:12.5px;font-weight:600;color:var(--muted)}
-.strip .pg{width:62px;height:80px;border-radius:7px;background:var(--paper);position:relative;overflow:hidden;box-shadow:inset 0 0 10px rgba(120,90,40,.25);margin-bottom:5px;border:2px solid transparent}
-.strip .pg span{position:absolute;left:7px;right:7px;height:2px;background:#6b5a46;opacity:.45;border-radius:2px}
-.strip .bad .pg{border-color:var(--low)}
-.strip .bad .pg span{filter:blur(2px);height:4px}
-.strip .bad{color:var(--low)}
-.blurprev{background:var(--paper);border-radius:12px;padding:16px 18px;box-shadow:inset 0 0 18px rgba(120,90,40,.2);font-family:'Homemade Apple',cursive;font-size:15px;line-height:2;color:#3a2c1f;overflow:hidden;white-space:nowrap;margin-bottom:6px}
-.blurprev div{filter:blur(2.6px)}
-.tips{list-style:none;padding:0;margin:16px 0 0}
-.tips li{display:flex;gap:12px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--line);font-size:15px;line-height:1.4}
-.tips li:first-child{border-top:0}
-.tips .icon{color:var(--accent);margin-top:1px}
-.tips b{display:block}
-.tips small{color:var(--muted);font-size:13.5px}
-.doc.fuzzy .hl,.zoom.fuzzy{color:transparent;text-shadow:0 0 5px rgba(58,44,31,.95)}
-.blurnote{display:flex;gap:10px;background:var(--med-soft);border:1.5px solid #ecd28c;border-radius:14px;padding:12px 14px;font-size:14.5px;line-height:1.4;margin-bottom:12px}
-.blurnote .icon{color:var(--med);margin-top:2px}
-.blurnote b{display:block;color:#6a4900;margin-bottom:2px}
-.note{font-size:13px;color:var(--muted);text-align:center;margin-top:2px}
 </style>
 </head>
 <body>
@@ -249,39 +206,25 @@ h1,h2,h3{font-family:var(--serif);margin:0}
     <div class="scroll"><div class="home">
       <div class="brand"><div class="logo" aria-hidden="true">i</div><h1>Interpret</h1></div>
       <p class="tag">Snap a handwritten or printed page. I'll transcribe it, show you where I'm unsure, and you make the final call.</p>
-      <button class="lang-chip" id="langchip" aria-haspopup="dialog">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg>
-        <span id="langlabel">I read: English</span>
-      </button>
+      <div class="langcard">
+        <div class="hd"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg><b id="langq">What language do you read?</b></div>
+        <p>Documents in other languages will be translated into English.</p>
+        <div class="langs" role="radiogroup" aria-labelledby="langq" id="langs"></div>
+      </div>
+      <p class="sec-label">Add a document</p>
       <div class="capture">
         <button data-pick><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Take a photo</button>
         <button data-pick><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4M7 9l5-5 5 5M4 16v4h16v-4"/></svg>Upload image</button>
       </div>
-      <p class="sec-label">Sample documents</p>
-      <div id="samples"></div>
     </div></div>
   </section>
 
   <!-- PROCESSING -->
   <section class="screen" id="s-proc" aria-label="Transcribing">
     <div class="proc">
-      <div class="scanbox" id="scanbox" aria-hidden="true"></div>
+      <div class="scanbox" aria-hidden="true"><img id="scanimg" alt=""><div class="scanline"></div></div>
       <h2 id="proc-title" aria-live="polite">Reading your document…</h2>
       <ul class="steps" id="steps"></ul>
-    </div>
-  </section>
-
-  <!-- ERROR: BLURRY PAGE -->
-  <section class="screen" id="s-error" aria-label="Photo problem">
-    <div class="topbar">
-      <button class="iconbtn" id="err-back" aria-label="Back to home"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 5l-7 7 7 7"/></svg></button>
-      <div class="t"><b id="err-title"></b></div>
-    </div>
-    <div class="scroll"><div class="err" id="err"></div></div>
-    <div class="bottombar two">
-      <button class="btn primary" id="err-retake"></button>
-      <button class="btn ghost" id="err-skip"></button>
-      <p class="note" id="err-note"></p>
     </div>
   </section>
 
@@ -293,9 +236,8 @@ h1,h2,h3{font-family:var(--serif);margin:0}
     </div>
     <div class="scroll" id="rv-scroll">
       <div class="docwrap" id="docwrap">
-        <div class="pages" id="pages" aria-label="Pages" hidden></div>
-        <div class="docstage"><div class="doc" id="doc" aria-label="Photo of your document. Outlined words are ones I'm unsure about."></div><div id="blurmsg"></div></div>
-        <div class="docbar"><span id="docbar-t">Your photo · tap a word to check it</span><button id="docsize" aria-expanded="false">Expand</button></div>
+        <div class="doc" id="doc"><div class="imgwrap" id="imgwrap"><img id="docimg" alt=""></div></div>
+        <div class="docbar"><span>Your photo · tap a box to check it</span><button id="zoombtn" aria-pressed="false">Zoom in</button><button id="docsize" aria-expanded="false">Expand</button></div>
       </div>
       <div class="legend" aria-label="Legend">
         <span><svg width="22" height="8" viewBox="0 0 22 8" aria-hidden="true"><path d="M1 4q2.5-4 5 0t5 0 5 0 5 0" fill="none" stroke="#b4462f" stroke-width="2"/></svg>Not sure</span><span><i class="sw med"></i>Fairly sure</span><span><i class="sw ok"></i>You reviewed</span>
@@ -331,279 +273,237 @@ h1,h2,h3{font-family:var(--serif);margin:0}
   </div>
   <div class="toast" id="toast" role="status"></div>
 </div>
+
 <script>
-/* ---------- Sample data (simulated AI output) ---------- */
-const DOCS = {
-  letter:{
-    title:"Letter to Margaret", lang:"English", code:"en", font:"letter",
-    lines:[
-      "Dear Margaret,",
-      "Thank you for the lovely [quilt]. It",
-      "arrived on Tuesday and [harold] says",
-      "it is the finest he has seen. The",
-      "weather here has been [bitter], so it",
-      "came at just the right time. Little",
-      "[ellen] started school last week and",
-      "already reads better than her brother.",
-      "Please give my love to Aunt [ruth]",
-      "and tell her the recipe for the apple",
-      "cake is on its way.",
-      "With all my love,",
-      "[josephine]"
+/* ---------- Languages ---------- */
+const LANGS={en:{name:"English",native:"English"},es:{name:"Spanish",native:"Español"},de:{name:"German",native:"Deutsch"},fr:{name:"French",native:"Français"}};
+const NOTES={
+  name:{en:"a name",es:"un nombre",de:"ein Name",fr:"un nom"},
+  place:{en:"a place name",es:"un lugar",de:"ein Ortsname",fr:"un nom de lieu"},
+  nonsense:{en:"doesn't make sense here",es:"no tiene sentido aquí",de:"ergibt hier keinen Sinn",fr:"n'a pas de sens ici"},
+  same:{en:"same meaning",es:"mismo significado",de:"gleiche Bedeutung",fr:"même sens"},
+  old:{en:"older spelling",es:"ortografía antigua",de:"alte Schreibweise",fr:"orthographe ancienne"},
+  opposite:{en:"opposite meaning",es:"significado opuesto",de:"gegenteilige Bedeutung",fr:"sens contraire"},
+  trade:{en:"also a real trade",es:"también un oficio real",de:"auch ein echtes Handwerk",fr:"aussi un vrai métier"}
+};
+
+/* ---------- Sample documents (simulated AI output) ----------
+   box = [left, top, right, bottom] in % of the photo
+   tr  = how each option reads in the other languages (used in the translation)
+   n   = optional note key shown next to the option's meaning */
+const DOCS={
+  cert:{
+    title:"Journeyman's certificate", lang:"de", img:"images/certificate.jpg", iw:1600, ih:1359,
+    meta:"German · Dresden, 1769 · printed and handwritten", tag:"Printed + handwritten",
+    readStep:"Reading print and handwriting",
+    text:[
+      "Wir geschworne Vor- und andere Meister des Handwercks derer [huf]- und [waffen]schmiede in der Chur-Fürstl. Sächß. Residenz-Stadt Dreßden, bescheinigen, daß gegenwärtiger Geselle, mit Nahmen Christian [wagner], von Neustädtel bey [schneeberg] gebürtig, so [n25] Jahr alt und mittler Statur, auch [braunen] Haaren ist, bey Uns allhier [frac] Jahr in Arbeit gestanden und sich solche Zeit über treu, fleißig, still, friedsam und ehrlich, wie einem jeglichen Handwercks-Purschen gebühret, verhalten hat.",
+      "Welches Wir also attestiren und deshalb unsere sämtliche Mitmeister, diesen Gesellen nach Handwercks-Gebrauch überall zu fördern, geziemend ersuchen wollen. Dreßden, den [d26] Oct. 1769.",
+      "Ober-Meister: Christian [ziegel]",
+      "Ober-Meister: Christian Friedrich Naumann",
+      "Meister, wo der Geselle gearbeitet: Johann August [frohst]"
     ],
-    paras:[0,1,11],
-    trans:{de:{
-      template:"Liebe Margaret,\nvielen Dank für die schöne {quilt}. Sie kam am Dienstag an, und {harold} sagt, es sei die schönste, die er je gesehen hat. Das Wetter hier war {bitter}, also kam sie genau zur richtigen Zeit. Die kleine {ellen} hat letzte Woche mit der Schule angefangen und liest schon besser als ihr Bruder. Bitte grüße Tante {ruth} herzlich von mir und sag ihr, dass das Rezept für den Apfelkuchen unterwegs ist.\nIn Liebe,\n{josephine}",
-      w:{
-        quilt:[["Steppdecke","…danke für die schöne <b>Steppdecke</b>"],["Schuld","…danke für die schöne <b>Schuld</b> (ergibt hier kaum Sinn)"],["Schreibfeder","…danke für die schöne <b>Schreibfeder</b>"]],
-        harold:[["Harold","…und <b>Harold</b> sagt, es sei die schönste (Name)"],["Howard","…und <b>Howard</b> sagt, es sei die schönste (Name)"],["Harald","…und <b>Harald</b> sagt, es sei die schönste (Name)"]],
-        bitter:[["bitterkalt","Das Wetter hier war <b>bitterkalt</b>"],["besser","Das Wetter hier war <b>besser</b>"],["Butter","Das Wetter hier war <b>Butter</b> (ergibt keinen Sinn)"]],
-        ellen:[["Ellen","Die kleine <b>Ellen</b> hat mit der Schule angefangen (Name)"],["Ellie","Die kleine <b>Ellie</b> hat mit der Schule angefangen (Name)"],["Allen","Der kleine <b>Allen</b> hat mit der Schule angefangen (Jungenname)"]],
-        ruth:[["Ruth","…grüße Tante <b>Ruth</b> von mir (Name)"],["Rita","…grüße Tante <b>Rita</b> von mir (Name)"],["Beth","…grüße Tante <b>Beth</b> von mir (Name)"]],
-        josephine:[["Josephine","In Liebe, <b>Josephine</b> (Name)"],["Josephina","In Liebe, <b>Josephina</b> (Name)"]]
-      }}},
+    tpl:{
+      en:"We, the sworn senior and other masters of the trade of the {huf} and {waffen} in the Electoral Saxon residence city of Dresden, certify that the present journeyman, named Christian {wagner}, born in Neustädtel near {schneeberg}, about {n25} years old, of medium build and with {braunen} hair, has worked with us here for {frac} and has conducted himself during this time faithfully, diligently, quietly, peaceably and honestly, as befits every journeyman of the trade.\nWe therefore attest this and respectfully ask all our fellow masters to support this journeyman everywhere according to the custom of the trade. Dresden, {d26} October 1769.\nSenior master: Christian {ziegel}\nSenior master: Christian Friedrich Naumann\nMaster with whom the journeyman worked: Johann August {frohst}",
+      fr:"Nous, maîtres jurés et autres maîtres du métier des {huf} et {waffen} de la ville de résidence électorale saxonne de Dresde, certifions que le présent compagnon, nommé Christian {wagner}, né à Neustädtel près de {schneeberg}, âgé d'environ {n25} ans, de taille moyenne et aux cheveux {braunen}, a travaillé chez nous pendant {frac} et s'est conduit pendant ce temps avec fidélité, diligence, calme et honnêteté, comme il convient à tout compagnon du métier.\nNous l'attestons donc et prions respectueusement tous nos confrères de soutenir partout ce compagnon selon l'usage du métier. Dresde, le {d26} octobre 1769.\nMaître juré : Christian {ziegel}\nMaître juré : Christian Friedrich Naumann\nMaître chez qui le compagnon a travaillé : Johann August {frohst}",
+      es:"Nosotros, los maestros jurados y demás maestros del oficio de los {huf} y {waffen} de la ciudad de residencia electoral sajona de Dresde, certificamos que el presente oficial, llamado Christian {wagner}, natural de Neustädtel cerca de {schneeberg}, de unos {n25} años, de estatura mediana y de cabello {braunen}, ha trabajado con nosotros durante {frac} y se ha comportado durante este tiempo con fidelidad, diligencia, tranquilidad y honradez, como corresponde a todo oficial del oficio.\nPor lo tanto, lo certificamos y rogamos respetuosamente a todos nuestros colegas maestros que apoyen a este oficial en todas partes según la costumbre del oficio. Dresde, {d26} de octubre de 1769.\nMaestro mayor: Christian {ziegel}\nMaestro mayor: Christian Friedrich Naumann\nMaestro con quien trabajó el oficial: Johann August {frohst}"
+    },
     unc:{
-      quilt:{ink:"quilt",why:"The first letter's loop could be a “q” or a “g”, and the last letter could be a “t” or an “l”.",
-        alts:[{t:"quilt",p:.72},{t:"guilt",p:.18},{t:"quill",p:.10}]},
-      harold:{ink:"Howard",why:"The middle letters are cramped together. Names can't be checked against a dictionary, so you may know better than I do.",
-        alts:[{t:"Harold",p:.55},{t:"Howard",p:.31},{t:"Harald",p:.14}]},
-      bitter:{ink:"bitter",why:"The first vowel is a single short stroke. It could be an i, e, or u.",
-        alts:[{t:"bitter",p:.58},{t:"better",p:.30},{t:"butter",p:.12}]},
-      ellen:{ink:"Ellen",why:"The end of this word trails off at the edge of the line.",
-        alts:[{t:"Ellen",p:.64},{t:"Ellie",p:.22},{t:"Allen",p:.14}]},
-      ruth:{ink:"Ruth",why:"The ink is faded here.",
-        alts:[{t:"Ruth",p:.57},{t:"Rita",p:.26},{t:"Beth",p:.17}]},
-      josephine:{ink:"Josephine",why:"The final letter has an extra flourish that could be an “a”.",
-        alts:[{t:"Josephine",p:.83},{t:"Josephina",p:.17}]}
+      huf:{box:[53.2,33.4,56.2,36.1],why:"This part was filled in by hand. The first letter could be an H, and the vowel could be u, o or a. It names the trade, so it changes the meaning.",
+        alts:[{t:"Huf",p:.58,tr:{en:"farriers",fr:"maréchaux-ferrants",es:"herradores"}},
+              {t:"Hof",p:.27,tr:{en:"court smiths",fr:"forgerons de la cour",es:"herreros de la corte"}},
+              {t:"Hut",p:.15,tr:{en:"hat smiths",fr:"forgerons de chapeaux",es:"herreros de sombreros"},n:"nonsense"}]},
+      waffen:{box:[61.7,33.4,65.9,36.1],why:"The middle letters could be “ff” or “g”. Both make a real trade.",
+        alts:[{t:"Waffen",p:.66,tr:{en:"weaponsmiths",fr:"armuriers",es:"armeros"}},
+              {t:"Wagen",p:.34,tr:{en:"wagon smiths",fr:"forgerons de charrettes",es:"herreros de carros"},n:"trade"}]},
+      wagner:{box:[68.4,38.9,73.3,41.2],why:"The second vowel is unclear. Names can't be checked against a dictionary.",
+        alts:[{t:"Wagner",p:.61,tr:{en:"Wagner",fr:"Wagner",es:"Wagner"},n:"name"},
+              {t:"Wegner",p:.27,tr:{en:"Wegner",fr:"Wegner",es:"Wegner"},n:"name"},
+              {t:"Wagener",p:.12,tr:{en:"Wagener",fr:"Wagener",es:"Wagener"},n:"name"}]},
+      schneeberg:{box:[41.3,40.6,47.2,42.9],why:"The handwriting is cramped here. “Neustädtel bey Schneeberg” is a real town in Saxony, which makes it the likeliest reading.",
+        alts:[{t:"Schneeberg",p:.52,tr:{en:"Schneeberg",fr:"Schneeberg",es:"Schneeberg"},n:"place"},
+              {t:"Schönberg",p:.30,tr:{en:"Schönberg",fr:"Schönberg",es:"Schönberg"},n:"place"},
+              {t:"Schwarzenberg",p:.18,tr:{en:"Schwarzenberg",fr:"Schwarzenberg",es:"Schwarzenberg"},n:"place"}]},
+      n25:{box:[58.2,41.5,59.9,43],why:"The second digit is written over the printed text.",
+        alts:[{t:"25",p:.55,tr:{en:"25",fr:"25",es:"25"}},{t:"23",p:.30,tr:{en:"23",fr:"23",es:"23"}},{t:"28",p:.15,tr:{en:"28",fr:"28",es:"28"}}]},
+      braunen:{box:[35.1,41.9,38.7,44.1],why:"Only the first few letters are clear before the word trails off.",
+        alts:[{t:"braunen",p:.63,tr:{en:"brown",fr:"bruns",es:"castaño"}},
+              {t:"blonden",p:.25,tr:{en:"blond",fr:"blonds",es:"rubio"}},
+              {t:"grauen",p:.12,tr:{en:"grey",fr:"gris",es:"gris"}}]},
+      frac:{box:[57.6,43.2,59.3,45.6],why:"This is a small fraction squeezed above the line. It tells how long he worked here.",
+        alts:[{t:"¾",p:.48,tr:{en:"three quarters of a year",fr:"trois quarts d'année",es:"tres cuartos de año"}},
+              {t:"¼",p:.32,tr:{en:"a quarter of a year",fr:"un quart d'année",es:"un cuarto de año"}},
+              {t:"2",p:.20,tr:{en:"2 years",fr:"2 ans",es:"2 años"}}]},
+      d26:{box:[62.9,52,65.2,54],why:"The second digit is unclear.",
+        alts:[{t:"26",p:.60,tr:{en:"26",fr:"26",es:"26"}},{t:"20",p:.25,tr:{en:"20",fr:"20",es:"20"}},{t:"28",p:.15,tr:{en:"28",fr:"28",es:"28"}}]},
+      ziegel:{box:[40.6,53.9,45.6,56.1],why:"The first letter of this signature could be a Z, R or K.",
+        alts:[{t:"Ziegel",p:.44,tr:{en:"Ziegel",fr:"Ziegel",es:"Ziegel"},n:"name"},
+              {t:"Riegel",p:.34,tr:{en:"Riegel",fr:"Riegel",es:"Riegel"},n:"name"},
+              {t:"Kegel",p:.22,tr:{en:"Kegel",fr:"Kegel",es:"Kegel"},n:"name"}]},
+      frohst:{box:[74.4,57.5,80.4,60.4],why:"Signatures are often rushed. This one could be several surnames.",
+        alts:[{t:"Frohst",p:.45,tr:{en:"Frohst",fr:"Frohst",es:"Frohst"},n:"name"},
+              {t:"Frost",p:.35,tr:{en:"Frost",fr:"Frost",es:"Frost"},n:"name"},
+              {t:"Probst",p:.20,tr:{en:"Probst",fr:"Probst",es:"Probst"},n:"name"}]}
     }
   },
-  record:{
-    title:"Baptism record, Kirchberg", lang:"German", code:"de", font:"record",
-    lines:[
-      "Im Jahre 1891 am [d14] März",
-      "wurde in [kirchberg] geboren",
-      "Anna Maria Hoffmann, eheliche",
-      "Tochter des [bauern] Johann Georg",
-      "Hoffmann und seiner Ehefrau",
-      "Katharina geb. [weber].",
-      "[getauft] am 16. März.",
-      "Pate: Maria Schäfer aus [lindenau]."
+
+  report:{
+    title:"Commissioners' report", lang:"en", img:"images/commissioners.jpg", iw:1600, ih:2529,
+    meta:"English cursive · 18th century · page 85", tag:"Cursive",
+    readStep:"Reading the handwriting",
+    text:[
+      "We the Commissioners for the Western Department acting under the Authority of Congress, having in Obedience to our Instructions, [notice] being first given to all the neighbouring Counties, proceeded to an [inquiry] into the Conduct of Colonel George Morgan — Agent for Indian Affairs, and continued the same by [adjourn] from the twentieth to the [sixth] [instant]; do, after the clearest and most satisfactory Testimonies, wholly [acquit] the said Colonel George Morgan of the Charges against him, of [infidelity] in his publick Trust, and [disaffection] to the American Cause —",
+      "And we testify that we are [possest] of"
     ],
-    paras:[0,6,7],
-    trTemplate:"In the year 1891, on the {d14} of March, Anna Maria Hoffmann was born in {kirchberg}, legitimate daughter of the {bauern} Johann Georg Hoffmann and his wife Katharina, née {weber}.\n{getauft} on 16 March.\nGodparent: Maria Schäfer from {lindenau}.",
+    tpl:{
+      de:"Wir, die Kommissare für das Westliche Departement, im Auftrag des Kongresses handelnd, haben gemäß unseren Anweisungen, nachdem allen benachbarten Grafschaften zuvor {notice} gegeben worden war, eine {inquiry} über das Verhalten von Oberst George Morgan, Beauftragter für Indianerangelegenheiten, durchgeführt und diese durch {adjourn} vom zwanzigsten bis zum {sixth} {instant} fortgesetzt. Nach den klarsten und überzeugendsten Zeugenaussagen {acquit} wir den genannten Oberst George Morgan vollständig von den Anklagen wegen {infidelity} in seinem öffentlichen Amt und wegen {disaffection} gegenüber der amerikanischen Sache.\nUnd wir bezeugen, dass wir {possest} …",
+      fr:"Nous, commissaires pour le Département de l'Ouest, agissant sous l'autorité du Congrès, avons, conformément à nos instructions et après qu'un {notice} eut d'abord été donné à tous les comtés voisins, procédé à une {inquiry} sur la conduite du colonel George Morgan, agent pour les affaires indiennes, et l'avons poursuivie par {adjourn} du vingt au {sixth} {instant}. Après les témoignages les plus clairs et les plus satisfaisants, nous {acquit} entièrement ledit colonel George Morgan des accusations portées contre lui pour {infidelity} dans sa charge publique et pour {disaffection} envers la cause américaine.\nEt nous attestons que nous {possest} …",
+      es:"Nosotros, los comisionados para el Departamento Occidental, actuando bajo la autoridad del Congreso, en obediencia a nuestras instrucciones y tras dar primero {notice} a todos los condados vecinos, procedimos a una {inquiry} sobre la conducta del coronel George Morgan, agente para asuntos indígenas, y la continuamos mediante {adjourn} desde el día veinte hasta el {sixth} {instant}. Después de los testimonios más claros y satisfactorios, {acquit} por completo al dicho coronel George Morgan de los cargos en su contra por {infidelity} en su cargo público y por {disaffection} hacia la causa americana.\nY damos fe de que {possest} …"
+    },
     unc:{
-      d14:{ink:"14.",why:"The second digit's stroke could be a 4, a 1, or a 7. Dates matter for family records, so check the photo.",
-        alts:[{t:"14.",p:.62,tr:"14th",ctx:"…on the <b>14th</b> of March, 1891"},{t:"11.",p:.27,tr:"11th",ctx:"…on the <b>11th</b> of March, 1891"},{t:"17.",p:.11,tr:"17th",ctx:"…on the <b>17th</b> of March, 1891"}]},
-      kirchberg:{ink:"Kirchberg",why:"The letters after “Kir” are faint. Place names can't be checked against a dictionary.",
-        alts:[{t:"Kirchberg",p:.58,tr:"Kirchberg",ctx:"…was born in <b>Kirchberg</b> (a town; means “church hill”)"},{t:"Kirschberg",p:.30,tr:"Kirschberg",ctx:"…was born in <b>Kirschberg</b> (a town; means “cherry hill”)"},{t:"Kirchborg",p:.12,tr:"Kirchborg",ctx:"…was born in <b>Kirchborg</b> (no known town by this name)"}]},
-      bauern:{ink:"Brauers",why:"There may be an “r” after the B. This word is the father's job, so each option changes the meaning.",
-        alts:[{t:"Bauern",p:.52,tr:"farmer",ctx:"…daughter of the <b>farmer</b> Johann Georg Hoffmann"},{t:"Brauers",p:.34,tr:"brewer",ctx:"…daughter of the <b>brewer</b> Johann Georg Hoffmann"},{t:"Bäckers",p:.14,tr:"baker",ctx:"…daughter of the <b>baker</b> Johann Georg Hoffmann"}]},
-      weber:{ink:"Weber",why:"The middle letter might be an “h”. This is a surname.",
-        alts:[{t:"Weber",p:.81,tr:"Weber",ctx:"…his wife Katharina, née <b>Weber</b> (surname; also means “weaver”)"},{t:"Wehner",p:.19,tr:"Wehner",ctx:"…his wife Katharina, née <b>Wehner</b> (surname)"}]},
-      getauft:{ink:"Getauft",why:"In this handwriting, “au” and “ra” look almost the same, and the two words mean very different things.",
-        alts:[{t:"Getauft",p:.66,tr:"Baptized",ctx:"<b>Baptized</b> on 16 March."},{t:"Getraut",p:.34,tr:"Married",ctx:"<b>Married</b> on 16 March."}]},
-      lindenau:{ink:"Lindenau",why:"The ending is smudged.",
-        alts:[{t:"Lindenau",p:.74,tr:"Lindenau",ctx:"…from <b>Lindenau</b> (a town)"},{t:"Lindenhof",p:.26,tr:"Lindenhof",ctx:"…from <b>Lindenhof</b> (a farm or estate name)"}]}
+      notice:{box:[68.7,49.8,78.6,52.1],why:"The fourth letter looks like an “i”, so the word could be read several ways.",
+        alts:[{t:"notice",p:.58,tr:{de:"Nachricht",fr:"avis",es:"aviso"}},
+              {t:"notion",p:.25,tr:{de:"eine Vorstellung",fr:"notion",es:"noción"},n:"nonsense"},
+              {t:"native",p:.17,tr:{de:"Einheimische",fr:"natif",es:"nativo"},n:"nonsense"}]},
+      inquiry:{box:[42.6,56.9,56.1,60.3],why:"The first letter could be an I or an E. Both spellings were used at the time.",
+        alts:[{t:"Inquiry",p:.62,tr:{de:"Untersuchung",fr:"enquête",es:"investigación"}},
+              {t:"Enquiry",p:.38,tr:{de:"Untersuchung",fr:"enquête",es:"investigación"},n:"same"}]},
+      adjourn:{box:[76.3,63.8,90,66.4],why:"This word is split across two lines (“Adjourn-” / “ments”), which makes it harder to read.",
+        alts:[{t:"Adjournments",p:.66,tr:{de:"Vertagungen",fr:"ajournements",es:"aplazamientos"}},
+              {t:"Adjustments",p:.34,tr:{de:"Anpassungen",fr:"ajustements",es:"ajustes"},n:"nonsense"}]},
+      sixth:{box:[71.5,66.8,90,69.7],why:"The words run together, and the ending is cramped against the edge of the page.",
+        alts:[{t:"twenty sixth",p:.57,tr:{de:"sechsundzwanzigsten",fr:"vingt-six",es:"veintiséis"}},
+              {t:"twenty first",p:.26,tr:{de:"einundzwanzigsten",fr:"vingt et un",es:"veintiuno"}},
+              {t:"twenty fifth",p:.17,tr:{de:"fünfundzwanzigsten",fr:"vingt-cinq",es:"veinticinco"}}]},
+      instant:{box:[21.1,70.8,33.1,73.4],why:"In old letters, “instant” means “of this month”. The ending could also be read as “-ead”.",
+        alts:[{t:"Instant",p:.55,tr:{de:"dieses Monats",fr:"du mois courant",es:"del presente mes"}},
+              {t:"Instead",p:.30,tr:{de:"stattdessen",fr:"au lieu de cela",es:"en cambio"},n:"nonsense"},
+              {t:"Distant",p:.15,tr:{de:"fern",fr:"lointain",es:"lejano"},n:"nonsense"}]},
+      acquit:{box:[63.9,73.8,74.3,76.4],why:"The letters after “acqu” are hard to separate. The sentence is about charges, so check the meaning closely.",
+        alts:[{t:"acquaint",p:.48,tr:{de:"machen bekannt",fr:"faisons connaître",es:"damos a conocer"},n:"nonsense"},
+              {t:"acquit",p:.40,tr:{de:"sprechen frei",fr:"acquittons",es:"absolvemos"}},
+              {t:"acquire",p:.12,tr:{de:"erwerben",fr:"acquérons",es:"adquirimos"},n:"nonsense"}]},
+      infidelity:{box:[34.5,81.1,49.6,84],why:"The gap after “In” is wide, so “In” might be a separate word. That would flip the meaning.",
+        alts:[{t:"Infidelity",p:.69,tr:{de:"Untreue",fr:"infidélité",es:"infidelidad"}},
+              {t:"Fidelity",p:.31,tr:{de:"Treue",fr:"fidélité",es:"fidelidad"},n:"opposite"}]},
+      disaffection:{box:[30.7,85.3,49.6,87.5],why:"The first letters are loopy and could be read as “Dis”, “Dif” or a separate flourish.",
+        alts:[{t:"Disaffection",p:.61,tr:{de:"Abneigung",fr:"désaffection",es:"desafecto"}},
+              {t:"Affection",p:.23,tr:{de:"Zuneigung",fr:"affection",es:"afecto"},n:"opposite"},
+              {t:"Dissection",p:.16,tr:{de:"Sezierung",fr:"dissection",es:"disección"},n:"nonsense"}]},
+      possest:{box:[69.9,88.7,81.5,91.7],why:"This uses an old spelling with a long “s”, which looks like an “f”. The sentence continues on the next page.",
+        alts:[{t:"possest",p:.47,tr:{de:"im Besitz sind von",fr:"possédons",es:"poseemos"},n:"old"},
+              {t:"possessed",p:.33,tr:{de:"im Besitz sind von",fr:"possédons",es:"poseemos"},n:"same"},
+              {t:"professed",p:.20,tr:{de:"uns bekennen zu",fr:"professons",es:"profesamos"}}]}
+    }
+  },
+
+  note:{
+    title:"Faded note about variants", lang:"fr", img:"images/faded-note.jpg", iw:1600, ih:2428,
+    meta:"French · faded ink", tag:"Faded ink",
+    readStep:"Reading the handwriting",
+    poor:{step:"Ink is very faded · reading it anyway", title:"The ink is very faded, so this is my best guess",
+          body:"Many words may be wrong. If you can take a clearer photo, that will work better.", done:"Made from a faded photo. Double-check it before you rely on it."},
+    text:[
+      "Il faut [redemander] les variantes à M. [delcroix].",
+      "Il faut lui demander aussi s'il s'est occupé des variantes de l'histoire générale et des autres histoires. Des variantes [complettes] sont [inutiles], mais il y en a sur des faits importans qu'il faudra [recueillir]. Si ce travail n'est pas à [lille] on le fera ici et cela donnera peu de [peine]."
+    ],
+    tpl:{
+      en:"We must {redemander} the variants from M. {delcroix}.\nWe must also ask him whether he has dealt with the variants of the general history and of the other histories. {complettes} variants are {inutiles}, but there are some on important facts that we will need to {recueillir}. If this work is not in {lille}, we will do it here, and it will be {peine}.",
+      de:"Man muss die Varianten bei M. {delcroix} {redemander}.\nMan muss ihn auch fragen, ob er sich mit den Varianten der allgemeinen Geschichte und der anderen Geschichten befasst hat. {complettes} Varianten sind {inutiles}, aber es gibt einige zu wichtigen Tatsachen, die man {recueillir} muss. Wenn diese Arbeit nicht in {lille} ist, wird man sie hier machen, und das wird {peine} machen.",
+      es:"Hay que {redemander} las variantes al Sr. {delcroix}.\nHay que preguntarle también si se ha ocupado de las variantes de la historia general y de las otras historias. Las variantes {complettes} son {inutiles}, pero hay algunas sobre hechos importantes que habrá que {recueillir}. Si este trabajo no está en {lille}, se hará aquí y eso dará {peine}."
+    },
+    unc:{
+      redemander:{box:[27.3,18.8,46,21.6],why:"The ink is faded and the first letters are faint, so there may or may not be a “re-” at the start.",
+        alts:[{t:"redemander",p:.55,tr:{en:"ask again for",de:"erneut anfordern",es:"volver a pedir"}},
+              {t:"demander",p:.30,tr:{en:"ask for",de:"anfordern",es:"pedir"}},
+              {t:"recommander",p:.15,tr:{en:"recommend",de:"empfehlen",es:"recomendar"},n:"nonsense"}]},
+      delcroix:{box:[5.9,21.2,21.3,24.7],why:"This is a name with a large flourish, and the ink is faint. Names can't be checked against a dictionary.",
+        alts:[{t:"Delcroix",p:.41,tr:{en:"Delcroix",de:"Delcroix",es:"Delcroix"},n:"name"},
+              {t:"Delevoix",p:.33,tr:{en:"Delevoix",de:"Delevoix",es:"Delevoix"},n:"name"},
+              {t:"Delvaux",p:.26,tr:{en:"Delvaux",de:"Delvaux",es:"Delvaux"},n:"name"}]},
+      complettes:{box:[9.2,35.8,25.2,38.7],why:"This looks like an older spelling with a doubled “t”, and part of the word is faded.",
+        alts:[{t:"complettes",p:.51,tr:{en:"Complete",de:"Vollständige",es:"completas"},n:"old"},
+              {t:"complètes",p:.32,tr:{en:"Complete",de:"Vollständige",es:"completas"},n:"same"},
+              {t:"complexes",p:.17,tr:{en:"Complex",de:"Komplexe",es:"complejas"}}]},
+      inutiles:{box:[39.1,35.9,54.1,38.7],why:"The beginning is very faint. There may be an “in-” at the start, which would flip the meaning.",
+        alts:[{t:"utiles",p:.52,tr:{en:"useful",de:"nützlich",es:"útiles"}},
+              {t:"inutiles",p:.48,tr:{en:"useless",de:"nutzlos",es:"inútiles"},n:"opposite"}]},
+      recueillir:{box:[75.9,41.5,90.9,44.6],why:"The middle letters run together in the faded ink.",
+        alts:[{t:"recueillir",p:.49,tr:{en:"collect",de:"sammeln",es:"recopilar"}},
+              {t:"rechercher",p:.31,tr:{en:"look for",de:"suchen",es:"buscar"}},
+              {t:"recevoir",p:.20,tr:{en:"receive",de:"erhalten",es:"recibir"}}]},
+      lille:{box:[53.5,44.2,60.7,47],why:"Short place names are hard to confirm when the ink is faint.",
+        alts:[{t:"Lille",p:.53,tr:{en:"Lille",de:"Lille",es:"Lille"},n:"place"},
+              {t:"Lisle",p:.29,tr:{en:"Lisle",de:"Lisle",es:"Lisle"},n:"place"},
+              {t:"l'Isle",p:.18,tr:{en:"l'Isle",de:"l'Isle",es:"l'Isle"},n:"place"}]},
+      peine:{box:[55.4,48.6,66.6,51.3],why:"The middle of the word is faded.",
+        alts:[{t:"peine",p:.56,tr:{en:"little trouble",de:"wenig Mühe",es:"poco trabajo"}},
+              {t:"perte",p:.44,tr:{en:"little loss",de:"wenig Verlust",es:"poca pérdida"}}]}
     }
   }
 };
 
-
-/* Multi-page journal with a blurry page 2 */
-DOCS.journal = {
-  title:"Farm journal, June 1944", lang:"English", code:"en", font:"journal",
-  meta:"English cursive · 1944 · 3 pages", thumb:"#efe2c6",
-  pages:[
-    {lines:[
-      "June 3rd, 1944",
-      "Rain all morning. Took the [team] out",
-      "to the north field after dinner and",
-      "got the last of the [oats] planted.",
-      "Mother is feeling poorly again.",
-      "Dr. [pratt] came by in the evening."
-    ], paras:[0,1]},
-    {lines:[
-      "June 5th",
-      "Clear and warm. Went to town for",
-      "[feed] and a new [harness] strap.",
-      "Saw [clara] at the post office. She",
-      "says the dance is Saturday next."
-    ], paras:[0,1]},
-    {lines:[
-      "June 8th",
-      "Letter from [jim] today, he is safe",
-      "in England. Mother cried when she",
-      "read it. Fixed the [fence] by the",
-      "creek. Clara and I will go to the",
-      "dance after all."
-    ], paras:[0,1]}
-  ],
-  unc:{
-    team:{ink:"team",why:"The second letter could be an “e” or an “r”.",
-      alts:[{t:"team",p:.61},{t:"tram",p:.22},{t:"train",p:.17}]},
-    oats:{ink:"oats",why:"The first letter is open at the top, so it could be an “o” or a “c”.",
-      alts:[{t:"oats",p:.54},{t:"cats",p:.30},{t:"oaks",p:.16}]},
-    pratt:{ink:"Pruitt",why:"The middle of this name is cramped. Names can't be checked against a dictionary, so you may know better than I do.",
-      alts:[{t:"Pratt",p:.48},{t:"Pruitt",p:.37},{t:"Platt",p:.15}]},
-    feed:{ink:"feed",why:"The two middle letters could be “ee” or “oo”.",
-      alts:[{t:"feed",p:.70},{t:"food",p:.20},{t:"seed",p:.10}]},
-    harness:{ink:"harness",why:"The letters after “har” run together.",
-      alts:[{t:"harness",p:.68},{t:"harvest",p:.32}]},
-    clara:{ink:"Clara",why:"The ending trails off.",
-      alts:[{t:"Clara",p:.63},{t:"Clare",p:.25},{t:"Cora",p:.12}]},
-    jim:{ink:"Jim",why:"The first letter could be a “J” or a “T”.",
-      alts:[{t:"Jim",p:.59},{t:"Tim",p:.33},{t:"Jem",p:.08}]},
-    fence:{ink:"fence",why:"The middle letters are faint.",
-      alts:[{t:"fence",p:.81},{t:"force",p:.19}]}
-  },
-  trans:{de:{
-    pages:[
-      "3. Juni 1944\nRegen den ganzen Vormittag. Fuhr nach dem Mittagessen mit dem {team} aufs Nordfeld und habe den letzten {oats} gesät. Mutter geht es wieder schlecht. Dr. {pratt} kam am Abend vorbei.",
-      "5. Juni\nKlar und warm. Fuhr in die Stadt, um {feed} und einen neuen {harness}riemen zu holen. Traf {clara} auf der Post. Sie sagt, der Tanz ist nächsten Samstag.",
-      "8. Juni\nHeute ein Brief von {jim}, er ist in England in Sicherheit. Mutter hat geweint, als sie ihn las. Habe den {fence} am Bach repariert. Clara und ich gehen doch zum Tanz."
-    ],
-    w:{
-      team:[["Gespann","Fuhr mit dem <b>Gespann</b> aufs Nordfeld (Pferde)"],["Straßenbahn","Fuhr mit der <b>Straßenbahn</b> aufs Nordfeld (ergibt kaum Sinn)"],["Zug","Fuhr mit dem <b>Zug</b> aufs Nordfeld (ergibt kaum Sinn)"]],
-      oats:[["Hafer","…den letzten <b>Hafer</b> gesät"],["Katzen","…die letzten <b>Katzen</b> gesät (ergibt keinen Sinn)"],["Eichen","…die letzten <b>Eichen</b> gepflanzt"]],
-      pratt:[["Pratt","Dr. <b>Pratt</b> kam am Abend vorbei (Name)"],["Pruitt","Dr. <b>Pruitt</b> kam am Abend vorbei (Name)"],["Platt","Dr. <b>Platt</b> kam am Abend vorbei (Name)"]],
-      feed:[["Futter","…in die Stadt, um <b>Futter</b> zu holen (für Tiere)"],["Lebensmittel","…in die Stadt, um <b>Lebensmittel</b> zu holen"],["Saatgut","…in die Stadt, um <b>Saatgut</b> zu holen"]],
-      harness:[["Geschirr","…einen neuen <b>Geschirr</b>riemen (für Pferde)"],["Ernte","…einen neuen <b>Ernte</b>riemen (ergibt keinen Sinn)"]],
-      clara:[["Clara","Traf <b>Clara</b> auf der Post (Name)"],["Clare","Traf <b>Clare</b> auf der Post (Name)"],["Cora","Traf <b>Cora</b> auf der Post (Name)"]],
-      jim:[["Jim","Heute ein Brief von <b>Jim</b> (Name)"],["Tim","Heute ein Brief von <b>Tim</b> (Name)"],["Jem","Heute ein Brief von <b>Jem</b> (Name)"]],
-      fence:[["Zaun","Habe den <b>Zaun</b> am Bach repariert"],["Kraft","Habe die <b>Kraft</b> am Bach repariert (ergibt keinen Sinn)"]]
-    }}}
-};
-DOCS.recipe = {
-  title:"Apple cake recipe card", lang:"English", code:"en", font:"letter",
-  meta:"English · handwritten recipe card", thumb:"#f1e4c9", blurryPhoto:true,
-  pages:[{lines:[
-    "Grandma's Apple [cake]",
-    "[n2] cups flour, 1 cup [sugar]",
-    "1 [tsp] cinnamon, pinch of [salt]",
-    "[n3] apples, peeled and sliced",
-    "Bake at [temp] for [mins] minutes"
-  ],paras:[0,1,2,3,4]}],
-  unc:{
-    cake:{ink:"Cake",why:"The photo is blurry here. The word's shape fits several words, but “Apple Cake” is the most common pairing.",
-      alts:[{t:"Cake",p:.52},{t:"Coke",p:.28},{t:"Cafe",p:.20}]},
-    n2:{ink:"2",why:"Numbers blur together easily. Most cakes use 2–3 cups of flour, so your own sense of the recipe may help.",
-      alts:[{t:"2",p:.45},{t:"3",p:.35},{t:"7",p:.20}]},
-    sugar:{ink:"sugar",why:"Only the first and last letters are visible through the blur.",
-      alts:[{t:"sugar",p:.55},{t:"super",p:.25},{t:"sage",p:.20}]},
-    tsp:{ink:"tbsp",why:"I can't tell if there's a “b” in this abbreviation. Teaspoon and tablespoon are 3× apart, so check carefully.",
-      alts:[{t:"tsp",p:.50},{t:"tbsp",p:.38},{t:"cup",p:.12}]},
-    salt:{ink:"salt",why:"The first letter is lost in the blur.",
-      alts:[{t:"salt",p:.48},{t:"malt",p:.30},{t:"soft",p:.22}]},
-    n3:{ink:"3",why:"The number's curves are blurred. It could be a 3, 5 or 8.",
-      alts:[{t:"3",p:.44},{t:"5",p:.36},{t:"8",p:.20}]},
-    temp:{ink:"350",why:"The middle digit is unclear. 350°F is the most common baking temperature.",
-      alts:[{t:"350",p:.47},{t:"330",p:.30},{t:"380",p:.23}]},
-    mins:{ink:"45",why:"The first digit is unclear. Baking time matters, so check this if you can.",
-      alts:[{t:"45",p:.41},{t:"25",p:.34},{t:"15",p:.25}]}
-  },
-  trans:{de:{
-    pages:["Omas Apfel{cake}\n{n2} Tassen Mehl, 1 Tasse {sugar}\n1 {tsp} Zimt, eine Prise {salt}\n{n3} Äpfel, geschält und in Scheiben geschnitten\nBei {temp} {mins} Minuten backen"],
-    w:{
-      cake:[["kuchen","Omas Apfel<b>kuchen</b>"],["-Cola","Omas Apfel<b>-Cola</b> (ergibt kaum Sinn)"],["-Café","Omas Apfel<b>-Café</b> (ein Lokal, kein Rezept)"]],
-      n2:[["2","<b>2</b> Tassen Mehl"],["3","<b>3</b> Tassen Mehl"],["7","<b>7</b> Tassen Mehl (sehr viel)"]],
-      sugar:[["Zucker","1 Tasse <b>Zucker</b>"],["super","1 Tasse <b>super</b> (ergibt keinen Sinn)"],["Salbei","1 Tasse <b>Salbei</b>"]],
-      tsp:[["Teelöffel","1 <b>Teelöffel</b> Zimt"],["Esslöffel","1 <b>Esslöffel</b> Zimt"],["Tasse","1 <b>Tasse</b> Zimt (sehr viel)"]],
-      salt:[["Salz","eine Prise <b>Salz</b>"],["Malz","eine Prise <b>Malz</b>"],["weich","eine Prise <b>weich</b> (ergibt keinen Sinn)"]],
-      n3:[["3","<b>3</b> Äpfel"],["5","<b>5</b> Äpfel"],["8","<b>8</b> Äpfel"]],
-      temp:[["350 °F","Bei <b>350 °F</b> (ca. 175 °C) backen"],["330 °F","Bei <b>330 °F</b> (ca. 165 °C) backen"],["380 °F","Bei <b>380 °F</b> (ca. 195 °C) backen"]],
-      mins:[["45","<b>45</b> Minuten backen"],["25","<b>25</b> Minuten backen"],["15","<b>15</b> Minuten backen"]]
-    }}}
-};
-DOCS.letter.meta="English cursive · 1958 · family letter";
-DOCS.record.meta="German · 1891 · family history"; DOCS.record.thumb="#ecdfc2";
-
-/* normalize single-page docs into the pages format */
-for(const d of Object.values(DOCS)){
-  if(!d.pages){ d.pages=[{lines:d.lines,paras:d.paras}]; }
-  if(d.trTemplate){ const w={}; for(const id in d.unc) w[id]=d.unc[id].alts.map(a=>[a.tr,a.ctx]); d.trans={en:{template:d.trTemplate,w}}; }
-  if(d.trans) for(const c in d.trans) if(!d.trans[c].pages) d.trans[c].pages=[d.trans[c].template];
-}
-const LANGS={en:{name:"English",native:"English"},de:{name:"German",native:"Deutsch"}};
-let userLang="en";
-const target=d=>(d.code!==userLang && d.trans && d.trans[userLang]) ? d.trans[userLang] : null;
-const needsTr=d=>d.code!==userLang;
-
 /* ---------- State ---------- */
-let doc=null, key=null, tokens=[], state={}, edits={}, tab="orig", sel=null, curPage=0, retaken=false;
+let doc=null, tokens=[], state={}, edits={}, tab="orig", sel=null, userLang="en", zoomed=false;
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const multi=()=>doc.pages.length>1;
-const readable=p=>!(doc.blurry===p && !retaken);
-const order=()=>tokens.filter(t=>t.unc && readable(t.page)).map(t=>t.id);
+const needsTr=d=>d.lang!==userLang;
+const tpl=()=>needsTr(doc)?doc.tpl[userLang]:null;
+const order=()=>tokens.filter(t=>t.unc).map(t=>t.id);
 const pending=()=>order().filter(id=>!state[id].done);
-const blurryPending=()=>doc.blurry!=null && !retaken;
-const fontFam={letter:"'Cedarville Cursive'",record:"'Pinyon Script'",journal:"'Homemade Apple'"};
-
+const level=id=>doc.unc[id].alts[0].p<0.6?"low":"med";
+const tok=id=>tokens.find(t=>t.id===id);
 function show(id){ $$(".screen").forEach(s=>s.classList.toggle("on",s.id===id)); }
 function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("on"); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("on"),2000); }
 
 function parse(d){
   const out=[];
-  d.pages.forEach((pg,pi)=>pg.lines.forEach((line,li)=>{
-    line.split(" ").forEach((tok,wi)=>{
-      const m=tok.match(/^([^\[]*)\[(\w+)\](.*)$/);
-      if(m) out.push({page:pi,line:li,id:m[2],pre:m[1],suf:m[3],unc:true});
-      else out.push({page:pi,line:li,id:`w${pi}_${li}_${wi}`,text:tok,unc:false});
-    });
+  d.text.forEach((para,pi)=>para.split(" ").forEach((w,wi)=>{
+    const m=w.match(/^([^\[]*)\[(\w+)\](.*)$/);
+    if(m) out.push({para:pi,id:m[2],pre:m[1],suf:m[3],unc:true});
+    else out.push({para:pi,id:`w${pi}_${wi}`,text:w,unc:false});
   }));
   return out;
 }
-const level=id=>doc.unc[id].alts[0].p<0.6?"low":"med";
-const curText=id=>state[id].text;
-const tok=id=>tokens.find(t=>t.id===id);
-function wordText(t){ return t.unc ? t.pre+curText(t.id)+t.suf : (edits[t.id]??t.text); }
-function inkLine(line){ return line.replace(/\[(\w+)\]/g,(_,id)=>doc.unc[id].ink); }
+function wordText(t){ return t.unc ? t.pre+state[t.id].text+t.suf : (edits[t.id]??t.text); }
+function trOf(id,i){ return doc.unc[id].alts[i].tr[userLang]; }
 function trFor(id){
-  const s=state[id], i=doc.unc[id].alts.findIndex(a=>a.t===s.text);
-  return i>=0?target(doc).w[id][i][0]:`[${s.text}]`;
+  const i=doc.unc[id].alts.findIndex(a=>a.t===state[id].text);
+  return i>=0?trOf(id,i):`[${state[id].text}]`;
+}
+/* builds a short snippet of the translated sentence around a word, with one option swapped in */
+function ctxFor(id,i){
+  const para=tpl().split("\n").find(p=>p.includes(`{${id}}`));
+  const [before,after]=para.split(`{${id}}`);
+  const fill=s=>s.replace(/\{(\w+)\}/g,(_,x)=>trFor(x));
+  const b=fill(before).trim().split(/\s+/).filter(Boolean), a=fill(after).trim().split(/\s+/).filter(Boolean);
+  const pre=b.slice(-5).join(" "), post=a.slice(0,5).join(" ");
+  const n=doc.unc[id].alts[i].n;
+  return `${b.length>5?"…":""}${esc(pre)} <b>${esc(trOf(id,i))}</b> ${esc(post)}${a.length>5?"…":""}${n?` <i>(${NOTES[n][userLang]})</i>`:""}`;
 }
 
 /* ---------- Home ---------- */
-function renderHome(){
-  $("#langlabel").textContent="I read: "+LANGS[userLang].name;
-  $("#langchip").setAttribute("aria-label","Your language: "+LANGS[userLang].name+". Change language");
-  $("#samples").innerHTML=Object.entries(DOCS).map(([k,d])=>{
-    const pills=[];
-    if(needsTr(d)) pills.push(`Will translate to ${LANGS[userLang].name}`);
-    if(d.pages.length>1) pills.push(`${d.pages.length} pages`);
-    if(d.blurryPhoto) pills.push("Blurry photo");
-    if(!pills.length) pills.push("Messy handwriting");
-    const lines=[12,22,32,42,52,62].map((t,i)=>`<span style="top:${t}px;${i%3===1?'right:20px':''}"></span>`).join("");
-    const stack=d.pages.length>1?"box-shadow:3px 3px 0 #e6d8bb,6px 6px 0 #ddcda9,inset 0 0 12px rgba(120,90,40,.25)":"";
-    return `<button class="sample" data-doc="${k}"><div class="thumb" aria-hidden="true" style="background:${d.thumb||'var(--paper)'};${stack}">${lines}</div>
-      <div><b>${esc(d.title)}</b><small>${esc(d.meta)}</small>${pills.map(p=>`<span class="pill" style="margin-right:4px">${p}</span>`).join("")}</div></button>`;
-  }).join("");
-  $$("[data-doc]").forEach(b=>b.onclick=()=>start(b.dataset.doc));
+/* In this prototype the user's language is always English. Other languages are shown but not selectable yet.
+   (Translations into Spanish, German and French are kept in the data so they can be switched on later.) */
+function renderLangs(){
+  $("#langs").innerHTML=Object.entries(LANGS).map(([c,l])=>{
+    const on=c==="en";
+    return `<button class="lang" role="radio" aria-checked="${on}" ${on?"":"disabled"} lang="${c}" aria-label="${l.name}${on?"":", coming soon"}">
+      <span class="nm"><b>${l.native}</b>${on?`<small>&nbsp;</small>`:`<small lang="en">${l.name}</small><span class="soon" lang="en">Coming soon</span>`}</span><span class="chk" aria-hidden="true">${on?"✓":""}</span>
+    </button>`;}).join("");
 }
-$$("[data-pick]").forEach(b=>b.onclick=()=>openPicker());
-$("#langchip").onclick=()=>{
-  openSheet("What language do you read?<small>If a document is in another language, I'll translate it into this one.</small>",
-    `<div class="opts" role="radiogroup" aria-label="Your language">${Object.entries(LANGS).map(([c,l])=>`
-      <button class="opt" role="radio" aria-checked="${c===userLang}" data-l="${c}"><div class="row"><span class="radio"></span><span class="word">${l.name}</span><span class="badge">${l.native}</span></div></button>`).join("")}
-      <p class="zcap" style="margin-top:4px">More languages in the full app.</p></div>`,"");
-  $$("[data-l]").forEach(b=>b.onclick=()=>{ userLang=b.dataset.l; renderHome(); closeSheet(); toast("Language set to "+LANGS[userLang].name); });
-};
+renderLangs();
+$$("[data-pick]").forEach(b=>b.onclick=openPicker);
 function openPicker(){
-  openSheet("Choose a document",
-   `<div class="pick"><p>In this prototype, the camera and upload are simulated. Pick a sample document to continue.</p>
-    ${Object.entries(DOCS).map(([k,d])=>`<button class="sample" data-p="${k}"><div><b>${esc(d.title)}</b><small>${esc(d.meta)}</small></div></button>`).join("")}</div>`,"");
+  openSheet("This feature isn't implemented yet",
+   `<div class="notimpl"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg><div>Select from the sample documents below:</div></div>
+    ${Object.entries(DOCS).map(([k,d])=>`<button class="sample" data-p="${k}"><img src="${d.img}" alt=""><div><b>${esc(d.title)}</b><small>${esc(d.meta)}</small>
+      ${needsTr(d)?`<span class="pill tr">Will translate to ${LANGS[userLang].name}</span>`:""}<span class="pill">${d.tag}</span></div></button>`).join("")}`,"");
   $$("[data-p]").forEach(b=>b.onclick=()=>{closeSheet();start(b.dataset.p);});
 }
-renderHome();
 
 /* ---------- Processing ---------- */
-function scan(pageIdx,blur){
-  const pg=doc.pages[pageIdx];
-  $("#scanbox").innerHTML=`<div class="scanline"></div>`+pg.lines.slice(0,9).map(l=>`<div style="font-family:${fontFam[doc.font]},cursive;white-space:nowrap;${doc.font==='journal'?'font-size:12px;line-height:2.1;':''}${blur?'filter:blur(2.2px);':''}">${esc(inkLine(l))}</div>`).join("");
-}
-/* steps: array of strings or {label, warn} ; calls done() after the last */
-function runSteps(title,steps,done){
-  $("#proc-title").textContent=title;
+function runSteps(steps,done){
   const ul=$("#steps");
   ul.innerHTML=steps.map(s=>`<li><span class="dot"></span><span class="lb">${typeof s==="string"?s:s.label}</span></li>`).join("");
   show("s-proc");
@@ -613,191 +513,94 @@ function runSteps(title,steps,done){
       if(prev.warn){ li.className="warn"; li.querySelector(".dot").textContent="!"; li.querySelector(".lb").textContent=prev.warn; }
       else { li.className="done"; li.querySelector(".dot").textContent="✓"; } }
     if(i<lis.length){ lis[i].className="doing"; i++; setTimeout(tick,800); }
-    else setTimeout(done,steps[steps.length-1].warn?900:300);
+    else setTimeout(done,300);
   };
   tick();
 }
-function readSteps(){
-  const s=["Reading the handwriting"];
-  if(target(doc)) s.push(`Detected ${doc.lang} · translating to ${LANGS[userLang].name}`);
-  s.push("Flagging words I'm unsure about");
-  return s;
-}
 function start(k){
-  key=k; doc=DOCS[k]; tokens=parse(doc); retaken=false; curPage=0;
-  state={}; edits={}; tab="orig";
+  doc=DOCS[k]; tokens=parse(doc); state={}; edits={}; tab="orig";
   tokens.filter(t=>t.unc).forEach(t=>state[t.id]={text:doc.unc[t.id].alts[0].t,done:false,how:null});
-  scan(0,false);
-  if(doc.blurryPhoto){
-    scan(0,true);
-    runSteps("Reading your document…",["Finding lines of text",{label:"Checking photo quality",warn:"Photo is blurry · reading it anyway"},...readSteps()],()=>{
-      $("#proc-title").textContent=`Done. Treat this as a best guess.`;
-      setTimeout(openReview,1000);
-    });
-  } else if(doc.blurry!=null){
-    const n=doc.pages.length;
-    runSteps("Reading your document…",[`Finding pages · ${n} found`,{label:"Checking photo quality",warn:`Page ${doc.blurry+1} is too blurry`}],()=>{ scan(doc.blurry,true); showError(); });
-  } else {
-    runSteps("Reading your document…",["Finding lines of text",...readSteps()],()=>{
-      $("#proc-title").textContent=`Done. ${order().length} words need a second look.`;
-      setTimeout(openReview,900);
-    });
-  }
-}
-
-/* ---------- Error: blurry page ---------- */
-function showError(){
-  const b=doc.blurry, n=doc.pages.length, others=doc.pages.map((_,i)=>i).filter(i=>i!==b).map(i=>i+1);
-  const othersTxt=others.length===2?`pages ${others[0]} and ${others[1]}`:`pages ${others.join(", ")}`;
-  $("#err-title").textContent=doc.title;
-  const tip=(d,t,s)=>`<li><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${d}</svg><div><b>${t}</b><small>${s}</small></div></li>`;
-  $("#err").innerHTML=`
-    <div class="warnicon" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17v.5"/></svg></div>
-    <h2>Page ${b+1} is too blurry to read</h2>
-    <p class="sub">I can read ${othersTxt}, but the letters on page ${b+1} run together. If I guessed, I'd likely be wrong without knowing it.</p>
-    <div class="strip" role="list" aria-label="Pages">${doc.pages.map((_,i)=>`
-      <figure role="listitem" class="${i===b?'bad':''}"><div class="pg" aria-hidden="true">${[12,22,32,42,52,62].map(t=>`<span style="top:${t}px"></span>`).join("")}</div>Page ${i+1} ${i===b?"· Blurry":"✓"}</figure>`).join("")}</div>
-    <div class="blurprev" aria-hidden="true">${doc.pages[b].lines.map(l=>`<div>${esc(inkLine(l))}</div>`).join("")}</div>
-    <p class="zcap" style="margin:0">Your photo of page ${b+1}</p>
-    <ul class="tips" aria-label="Tips for a sharper photo">
-      ${tip('<path d="M7 11V7a2 2 0 014 0v4M11 9V6a2 2 0 014 0v5M15 9a2 2 0 014 0v4a7 7 0 01-7 7h-1a6 6 0 01-5-3l-2-4a2 2 0 013-2l1 2"/>',"Hold your phone steady","Rest your elbows on the table, then tap and wait for it to focus.")}
-      ${tip('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/>',"Use bright, even light","Near a window works well. Avoid your phone's shadow.")}
-      ${tip('<rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M9 8h6M9 12h6M9 16h4"/>',"Lay the page flat","Fill the screen with the page so the letters are bigger.")}
-    </ul>`;
-  $("#err-retake").textContent=`Retake page ${b+1}`;
-  $("#err-skip").textContent=`Continue without page ${b+1}`;
-  $("#err-skip").hidden=false; $("#err-note").hidden=false;
-  $("#err-note").textContent=`You can retake page ${b+1} any time while you review.`;
-  $("#err-retake").onclick=()=>retake(true);
-  $("#err-skip").onclick=()=>{
-    scan(0,false);
-    runSteps("Reading your document…",[`Reading ${othersTxt}`,...readSteps().slice(1)],()=>{
-      $("#proc-title").textContent=`Done. ${order().length} words need a second look.`;
-      setTimeout(()=>{ curPage=0; openReview(); },900);
-    });
-  };
-  $("#err-back").onclick=()=>show("s-home");
-  show("s-error");
-}
-function retake(fromError){
-  const b=doc.blurry;
-  scan(b,false);
-  runSteps(`Retaking page ${b+1}…`,[`New photo of page ${b+1}`,"Checking photo quality · looks sharp",...readSteps()],()=>{
-    retaken=true;
-    const n=tokens.filter(t=>t.unc&&t.page===b).length;
-    $("#proc-title").textContent=fromError?`Done. ${order().length} words need a second look.`:`Page ${b+1} is readable now.`;
-    setTimeout(()=>{ curPage=fromError?0:b; openReview(); if(!fromError) toast(`${n} new words to check on page ${b+1}`); },900);
+  $("#scanimg").src=doc.img;
+  $("#proc-title").textContent="Reading your document…";
+  const steps=["Finding lines of text"];
+  if(doc.poor) steps.push({label:"Checking photo quality",warn:doc.poor.step});
+  steps.push(doc.readStep);
+  if(needsTr(doc)) steps.push(`Detected ${LANGS[doc.lang].name} · translating to ${LANGS[userLang].name}`);
+  steps.push("Flagging words I'm unsure about");
+  runSteps(steps,()=>{
+    $("#proc-title").textContent=doc.poor?"Done. Treat this as a best guess.":`Done. ${order().length} words need a second look.`;
+    setTimeout(openReview,900);
   });
 }
 
 /* ---------- Review ---------- */
 function openReview(){
   $("#rv-title").textContent=doc.title;
-  $("#doc").className="doc f-"+doc.font;
-  const tt=target(doc);
+  $("#docimg").src=doc.img; $("#docimg").alt=`Photo of ${doc.title}. Outlined boxes are words I'm unsure about.`;
+  zoomed=false; $("#imgwrap").classList.remove("z2"); $("#zoombtn").textContent="Zoom in"; $("#zoombtn").setAttribute("aria-pressed","false");
+  $("#doc").scrollTo(0,0);
+  const tt=needsTr(doc);
   $("#tabs").hidden=!tt; $("#trnote").hidden=!tt;
-  if(tt){ $("#tabs [data-tab=orig]").textContent=`${doc.lang} (original)`; $("#tabs [data-tab=tr]").textContent=`${LANGS[userLang].name} translation`;
+  if(tt){ $("#tabs [data-tab=orig]").textContent=`${LANGS[doc.lang].name} (original)`; $("#tabs [data-tab=tr]").textContent=`${LANGS[userLang].name} translation`;
     $$("#tabs button").forEach(x=>x.setAttribute("aria-selected",x.dataset.tab===tab)); }
-  renderPages(); renderDoc(); renderTx(); updateProgress();
+  renderBoxes(); renderTx(); updateProgress();
   show("s-review");
+  // start the photo near the first uncertain word
+  setTimeout(()=>{ const f=doc.unc[order()[0]].box, d=$("#doc"); d.scrollTop=Math.max(0,f[1]/100*$("#docimg").offsetHeight-40); },60);
 }
-function pageStatus(p){
-  if(!readable(p)) return ["bad","Blurry"];
-  const ids=tokens.filter(t=>t.unc&&t.page===p).map(t=>t.id), left=ids.filter(id=>!state[id].done).length;
-  return left?["todo",`${left} to check`]:["ok","✓ Done"];
-}
-function renderPages(){
-  const el=$("#pages"); el.hidden=!multi(); if(!multi()) return;
-  el.innerHTML=doc.pages.map((_,i)=>{ const [c,t]=pageStatus(i);
-    return `<button aria-pressed="${i===curPage}" data-pg="${i}">Page ${i+1}<span class="st ${c}">${t}</span></button>`; }).join("");
-  $$("#pages button").forEach(b=>b.onclick=()=>{ curPage=+b.dataset.pg; renderPages(); renderDoc(); });
-}
-function renderDoc(){
-  const d=$("#doc"), lines={};
-  tokens.filter(t=>t.page===curPage).forEach(t=>(lines[t.line]??=[]).push(t));
-  const ok=readable(curPage);
-  d.classList.toggle("blurry",!ok); d.classList.toggle("fuzzy",!!doc.blurryPhoto);
-  d.innerHTML=Object.values(lines).map(ts=>`<div class="hl ${doc.font}">`+ts.map(t=>{
-    if(!ok) return esc(t.unc? t.pre+doc.unc[t.id].ink+t.suf : t.text);
-    if(t.unc) return `${esc(t.pre)}<span class="dw unc ${level(t.id)} ${state[t.id].done?'done':''}" data-id="${t.id}">${esc(doc.unc[t.id].ink)}</span>${esc(t.suf)}`;
-    return `<span class="dw" data-id="${t.id}">${esc(t.text)}</span>`;
-  }).join(" ")+`</div>`).join("");
-  $("#blurmsg").innerHTML= ok? "" : `<div class="blurmsg" role="group" aria-label="Page ${curPage+1} problem"><b>This photo is too blurry to read</b><button class="btn primary" data-retake>Retake page ${curPage+1}</button></div>`;
-  $("#docbar-t").textContent= doc.blurryPhoto? "Your photo (blurry) · tap a word" : ok? (multi()?`Your photo of page ${curPage+1} · tap a word`:"Your photo · tap a word to check it") : `Page ${curPage+1} wasn't transcribed`;
-  $$("#doc .dw").forEach(s=>s.onclick=()=>openWord(s.dataset.id));
-  $$("[data-retake]").forEach(b=>b.onclick=()=>retake(false));
+function renderBoxes(){
+  $$("#imgwrap .bx").forEach(b=>b.remove());
+  order().forEach(id=>{
+    const [x0,y0,x1,y1]=doc.unc[id].box, s=state[id];
+    const b=document.createElement("button");
+    b.className=`bx ${s.done?"done":level(id)}`; b.dataset.id=id;
+    b.style.cssText=`left:${x0}%;top:${y0}%;width:${x1-x0}%;height:${y1-y0}%`;
+    b.setAttribute("aria-label",`Photo: ${aria(id)}`); b.tabIndex=-1;
+    b.onclick=()=>openWord(id);
+    $("#imgwrap").appendChild(b);
+  });
 }
 function cls(id){ const s=state[id]; return "w unc "+(s.done?"done":level(id)); }
 function aria(id){ const s=state[id]; return `${s.text}. ${s.done?"Reviewed":(level(id)==="low"?"Not sure":"Fairly sure")}. Tap to review.`; }
-function skipCard(p){
-  return `<div class="skipcard"><b>Page ${p+1} was too blurry to read</b>Nothing from this page is in your transcription yet.<button class="btn primary" data-retake>Retake page ${p+1}</button></div>`;
-}
 function renderTx(){
-  const tx=$("#tx"), tt=target(doc);
-  let html="";
-  if(tt && tab==="tr"){
-    $("#trnote-t").textContent=`Highlighted words come from spots you haven't reviewed yet. Tap one to compare the ${doc.lang} options and their meanings.`;
-    doc.pages.forEach((_,p)=>{
-      if(multi()) html+=`<h4 class="pghead">Page ${p+1}</h4>`;
-      if(!readable(p)){ html+=skipCard(p); return; }
-      html+=tt.pages[p].split("\n").map(par=>`<p lang="${userLang}">`+esc(par).replace(/\{(\w+)\}/g,(_,id)=>`<button class="${cls(id)}" data-id="${id}" aria-label="${esc(aria(id))}">${esc(trFor(id))}</button>`)+`</p>`).join("");
-    });
+  const tx=$("#tx"), t=tpl(); let html="";
+  if(doc.poor) html+=`<div class="poornote" role="note"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17v.5"/></svg><div><b>${doc.poor.title}</b>${doc.poor.body}</div></div>`;
+  if(t && tab==="tr"){
+    $("#trnote-t").textContent=`Highlighted words come from spots you haven't reviewed yet. Tap one to compare the ${LANGS[doc.lang].name} options and their meanings.`;
+    html+=t.split("\n").map(par=>`<p lang="${userLang}">`+esc(par).replace(/\{(\w+)\}/g,(_,id)=>`<button class="${cls(id)}" data-id="${id}" aria-label="${esc(aria(id))}">${esc(trFor(id))}</button>`)+`</p>`).join("");
   } else {
-    if(tt) $("#trnote-t").textContent=`This document is in ${doc.lang}. When you check a word, you'll see each ${doc.lang} option with its ${LANGS[userLang].name} meaning.`;
-    doc.pages.forEach((pg,p)=>{
-      if(multi()) html+=`<h4 class="pghead">Page ${p+1}</h4>`;
-      if(!readable(p)){ html+=skipCard(p); return; }
-      let h="", cur=-1;
-      tokens.filter(t=>t.page===p).forEach(t=>{
-        if(t.line!==cur){ if(cur>=0) h+= pg.paras.includes(t.line)?"</p><p>":" "; cur=t.line; } else h+=" ";
-        if(t.unc) h+=`${esc(t.pre)}<button class="${cls(t.id)}" data-id="${t.id}" aria-label="${esc(aria(t.id))}">${esc(curText(t.id))}</button>${esc(t.suf)}`;
-        else h+=`<button class="w ${edits[t.id]!=null?'edited':''}" tabindex="-1" data-id="${t.id}">${esc(wordText(t))}</button>`;
-      });
-      html+=`<p lang="${doc.code}">`+h+"</p>";
+    if(t) $("#trnote-t").textContent=`This document is in ${LANGS[doc.lang].name}. When you check a word, you'll see each option with its ${LANGS[userLang].name} meaning.`;
+    doc.text.forEach((_,p)=>{
+      html+=`<p lang="${doc.lang}">`+tokens.filter(x=>x.para===p).map(x=> x.unc
+        ? `${esc(x.pre)}<button class="${cls(x.id)}" data-id="${x.id}" aria-label="${esc(aria(x.id))}">${esc(state[x.id].text)}</button>${esc(x.suf)}`
+        : `<button class="w ${edits[x.id]!=null?'edited':''}" tabindex="-1" data-id="${x.id}">${esc(wordText(x))}</button>`).join(" ")+`</p>`;
     });
   }
-  if(doc.blurryPhoto) html=`<div class="blurnote" role="note"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17v.5"/></svg><div><b>Your photo is blurry, so this is my best guess</b>Many words may be wrong. Check numbers and amounts carefully. If you can take a clearer photo, that will work better.</div></div>`+html;
   tx.innerHTML=html;
   $$("#tx .w").forEach(b=>b.onclick=()=>openWord(b.dataset.id));
-  $$("#tx [data-retake]").forEach(b=>b.onclick=()=>retake(false));
 }
 function updateProgress(){
   const n=order().length, p=pending().length, d=n-p;
-  $("#rv-prog").textContent=`${d} of ${n} uncertain words reviewed`+(blurryPending()?` · page ${doc.blurry+1} missing`:"");
-  $("#rv-bar").style.width=(n?d/n*100:0)+"%";
+  $("#rv-prog").textContent=`${d} of ${n} uncertain words reviewed`;
+  $("#rv-bar").style.width=(d/n*100)+"%";
   const bb=$("#rv-bottom");
-  bb.classList.remove("two");
-  if(p){
-    bb.innerHTML=`<button class="btn primary" id="nextbtn">Review next word <span style="opacity:.75;font-weight:500">(${p} left)</span></button>`;
-    $("#nextbtn").onclick=()=>openWord(pending()[0]);
-  } else if(blurryPending()){
-    bb.classList.add("two");
-    bb.innerHTML=`<button class="btn primary" id="rtk">Retake page ${doc.blurry+1}</button><button class="btn ghost" id="finbtn">Finish without page ${doc.blurry+1}</button>`;
-    $("#rtk").onclick=()=>retake(false); $("#finbtn").onclick=finish;
-  } else {
-    bb.innerHTML=`<button class="btn primary" id="finbtn">Finish transcription</button>`;
-    $("#finbtn").onclick=finish;
-  }
-  if(doc.blurryPhoto){
-    bb.classList.add("two");
-    bb.insertAdjacentHTML("beforeend",`<button class="btn ghost" id="diffphoto">Choose a different photo</button>`);
-    $("#diffphoto").onclick=()=>show("s-home");
-  }
+  bb.innerHTML = p
+    ? `<button class="btn primary" id="nextbtn">Review next word <span style="opacity:.75;font-weight:500">(${p} left)</span></button>`
+    : `<button class="btn primary" id="finbtn">Finish transcription</button>`;
+  if(doc.poor) bb.insertAdjacentHTML("beforeend",`<button class="btn ghost" id="diffphoto">Choose a different photo</button>`);
+  if(p) $("#nextbtn").onclick=()=>openWord(pending()[0]); else $("#finbtn").onclick=finish;
+  if(doc.poor) $("#diffphoto").onclick=()=>{ show("s-home"); openPicker(); };
 }
-$$("#tabs button").forEach(b=>b.onclick=()=>{
-  tab=b.dataset.tab; $$("#tabs button").forEach(x=>x.setAttribute("aria-selected",x===b)); renderTx();
-});
+$$("#tabs button").forEach(b=>b.onclick=()=>{ tab=b.dataset.tab; $$("#tabs button").forEach(x=>x.setAttribute("aria-selected",x===b)); renderTx(); });
 $("#back").onclick=()=>show("s-home");
-$("#docsize").onclick=e=>{const w=$("#docwrap");const big=w.classList.toggle("big");e.target.textContent=big?"Shrink":"Expand";e.target.setAttribute("aria-expanded",big);};
+$("#docsize").onclick=e=>{ const big=$("#docwrap").classList.toggle("big"); e.target.textContent=big?"Shrink":"Expand"; e.target.setAttribute("aria-expanded",big); };
+$("#zoombtn").onclick=e=>{ zoomed=!zoomed; $("#imgwrap").classList.toggle("z2",zoomed); e.target.textContent=zoomed?"Zoom out":"Zoom in"; e.target.setAttribute("aria-pressed",zoomed); };
 
-/* link transcription <-> document (switches page if needed) */
+/* link transcription <-> photo */
 function flash(id){
-  const t=tok(id);
-  if(t.page!==curPage){ curPage=t.page; renderPages(); renderDoc(); }
-  $$("#doc .dw.flash").forEach(x=>x.classList.remove("flash"));
-  $$(".w.active").forEach(x=>x.classList.remove("active"));
-  const s=$(`#doc .dw[data-id="${id}"]`);
-  if(s){ s.classList.add("flash"); const d=$("#doc"); d.scrollTo({top:s.offsetTop-d.clientHeight/2+20,left:Math.max(0,s.offsetLeft-60),behavior:"smooth"}); $("#rv-scroll").scrollTo({top:0,behavior:"smooth"}); }
+  $$(".bx.flash").forEach(x=>x.classList.remove("flash")); $$(".w.active").forEach(x=>x.classList.remove("active"));
+  const b=$(`.bx[data-id="${id}"]`);
+  if(b){ b.classList.add("flash"); const d=$("#doc"); d.scrollTo({top:b.offsetTop-d.clientHeight/2+b.offsetHeight/2,left:Math.max(0,b.offsetLeft-d.clientWidth/2+b.offsetWidth/2),behavior:"smooth"}); $("#rv-scroll").scrollTo({top:0,behavior:"smooth"}); }
   $$(`#tx .w[data-id="${id}"]`).forEach(x=>x.classList.add("active"));
 }
 
@@ -806,48 +609,58 @@ function openSheet(title,body,foot){
   $("#sh-title").innerHTML=title; $("#sh-body").innerHTML=body; $("#sh-foot").innerHTML=foot;
   $("#sh-foot").style.display=foot?"flex":"none";
   $("#scrim").classList.add("on"); $("#sheet").classList.add("on");
-  setTimeout(()=>($("#sheet [aria-checked=true]")||$("#sh-close")).focus(),320);
+  setTimeout(()=>($("#sheet [aria-checked=true]")||$("#sheet .sample")||$("#sh-close")).focus(),320);
 }
 function closeSheet(){
   $("#scrim").classList.remove("on"); $("#sheet").classList.remove("on");
-  $$("#doc .dw.flash").forEach(x=>x.classList.remove("flash")); $$(".w.active").forEach(x=>x.classList.remove("active"));
+  $$(".bx.flash").forEach(x=>x.classList.remove("flash")); $$(".w.active").forEach(x=>x.classList.remove("active"));
 }
 $("#scrim").onclick=closeSheet; $("#sh-close").onclick=closeSheet;
 document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&$("#sheet").classList.contains("on")) closeSheet(); });
 
+/* zoomed crop of the real photo around a word */
 function zoomHTML(id){
-  const i=tokens.findIndex(t=>t.id===id), t=tokens[i];
-  const ink=t2=>t2? (t2.unc? t2.pre+doc.unc[t2.id].ink+t2.suf : t2.text):"";
-  const same=t2=>t2&&t2.page===t.page&&t2.line===t.line;
-  const prev=same(tokens[i-1])?ink(tokens[i-1]):"", next=same(tokens[i+1])?ink(tokens[i+1]):"";
-  const mid=t.unc? `${esc(t.pre)}<span class="z">${esc(doc.unc[id].ink)}</span>${esc(t.suf)}` : `<span class="z">${esc(t.text)}</span>`;
-  return `<div class="zoom f-${doc.font} ${doc.blurryPhoto?'fuzzy':''}" aria-hidden="true"><span class="ctx">${esc(prev)}</span> ${mid} <span class="ctx">${esc(next)}</span></div><p class="zcap">Zoomed in from your photo, ${multi()?`page ${t.page+1}, `:""}line ${t.line+1}</p>`;
+  return `<div class="zoom" data-z="${id}" aria-hidden="true"><img src="${doc.img}" alt=""><div class="zb"></div></div><p class="zcap">Zoomed in from your photo</p>`;
+}
+function layoutZoom(){
+  const z=$("#sh-body .zoom"); if(!z) return;
+  const [x0,y0,x1,y1]=doc.unc[z.dataset.z].box, cw=z.clientWidth;
+  const bw=x1-x0, bh=(y1-y0)*doc.ih/doc.iw;               // box size in "width %" units
+  const regW=Math.max(bw*2.6, 22);                         // show some context around the word
+  const scale=cw/(regW/100*doc.iw);                        // px per image px
+  const dispW=doc.iw*scale, dispH=doc.ih*scale;
+  const cx=(x0+x1)/2/100*dispW, cy=(y0+y1)/2/100*dispH;
+  const ch=Math.min(140, Math.max(84, (y1-y0)/100*dispH*2.6));
+  z.style.height=ch+"px";
+  const left=Math.min(0,Math.max(cw-dispW, cw/2-cx)), top=Math.min(0,Math.max(ch-dispH, ch/2-cy));
+  const img=z.querySelector("img"); img.style.width=dispW+"px"; img.style.left=left+"px"; img.style.top=top+"px";
+  const zb=z.querySelector(".zb"); zb.style.cssText=`left:${x0/100*dispW+left-3}px;top:${y0/100*dispH+top-3}px;width:${(x1-x0)/100*dispW+6}px;height:${(y1-y0)/100*dispH+6}px`;
 }
 
 function openWord(id){
   flash(id);
   const t=tok(id);
   if(!t.unc) return openEdit(t);
-  const u=doc.unc[id], s=state[id], ord=order(), n=ord.indexOf(id)+1, tt=target(doc);
+  const u=doc.unc[id], s=state[id], ord=order(), n=ord.indexOf(id)+1, tt=needsTr(doc);
   const isOwn=!u.alts.some(a=>a.t===s.text);
-  sel = isOwn? "__own" : s.text;
-  const lv=level(id);
-  const title=`${s.done?"Reviewed word":(lv==="low"?"I'm not sure about this word":"I'm fairly sure, but check")}<small>Word ${n} of ${ord.length}${multi()?` · page ${t.page+1}`:""}${tt?` · ${doc.lang} with ${LANGS[userLang].name} meaning`:""}</small>`;
+  sel=isOwn?"__own":s.text;
+  const title=`${s.done?"Reviewed word":(level(id)==="low"?"I'm not sure about this word":"I'm fairly sure, but check")}<small>Word ${n} of ${ord.length}${tt?` · ${LANGS[doc.lang].name} with ${LANGS[userLang].name} meaning`:""}</small>`;
   const opts=u.alts.map((a,i)=>`
     <button class="opt" role="radio" aria-checked="${sel===a.t}" data-v="${esc(a.t)}">
-      <div class="row"><span class="radio"></span><span class="word" lang="${doc.code}">${esc(a.t.replace(/\.$/,""))}</span>${i===0?'<span class="badge best">AI\'s best guess</span>':''}</div>
+      <div class="row"><span class="radio"></span><span class="word" lang="${doc.lang}">${esc(a.t)}</span>${i===0?'<span class="badge best">AI\'s best guess</span>':''}</div>
       <div class="conf"><span class="bar"><i style="width:${a.p*100}%"></i></span>${Math.round(a.p*100)}% likely</div>
-      ${tt?`<div class="tr" lang="${userLang}"><span class="lbl">In ${LANGS[userLang].name}</span>${tt.w[id][i][1]}</div>`:""}
+      ${tt?`<div class="tr" lang="${userLang}"><span class="lbl" lang="en">In ${LANGS[userLang].name}</span>${ctxFor(id,i)}</div>`:""}
     </button>`).join("");
   const own=`<button class="opt own" role="radio" aria-checked="${isOwn}" data-v="__own">
       <div class="row"><span class="radio"></span><span class="word">None of these, I'll type it</span></div>
       <div class="own-in"><input id="ownin" aria-label="Type the correct word" placeholder="Type what it says" value="${isOwn?esc(s.text):""}"></div>
     </button>`;
-  const body=`${zoomHTML(id)}
-    <div class="why"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17v.5"/></svg><div><b>Why I'm unsure:</b> ${u.why}</div></div>
-    <div class="opts" role="radiogroup" aria-label="Possible readings">${opts}${own}</div>`;
-  const foot=`<button class="btn ghost" id="skip">${nextAfter(id)?"Skip for now":"Cancel"}</button><button class="btn primary" id="confirm">Confirm</button>`;
-  openSheet(title,body,foot);
+  openSheet(title,
+    `${zoomHTML(id)}
+     <div class="why"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17v.5"/></svg><div><b>Why I'm unsure:</b> ${u.why}</div></div>
+     <div class="opts" role="radiogroup" aria-label="Possible readings">${opts}${own}</div>`,
+    `<button class="btn ghost" id="skip">${nextAfter(id)?"Skip for now":"Cancel"}</button><button class="btn primary" id="confirm">Confirm</button>`);
+  requestAnimationFrame(layoutZoom); $("#sh-body .zoom img").onload=layoutZoom;
   $$(".opt").forEach(o=>o.onclick=e=>{
     if(e.target.tagName==="INPUT") return;
     sel=o.dataset.v; $$(".opt").forEach(x=>x.setAttribute("aria-checked",x===o));
@@ -862,23 +675,21 @@ function openWord(id){
 }
 function nextAfter(id){ const ord=order(), p=pending().filter(x=>x!==id), i=ord.indexOf(id); return p.find(x=>ord.indexOf(x)>i)||p[0]; }
 function validate(){ $("#confirm").disabled = sel==="__own" && !$("#ownin").value.trim(); }
-
 function confirmWord(id){
   const u=doc.unc[id], s=state[id];
   const val= sel==="__own" ? $("#ownin").value.trim() : sel;
   s.text=val; s.done=true;
   s.how = sel==="__own" ? "typed" : (val===u.alts[0].t ? "kept" : "changed");
-  renderPages(); renderDoc(); renderTx(); updateProgress();
+  renderBoxes(); renderTx(); updateProgress();
   const nx=nextAfter(id);
-  toast(`Saved “${val.replace(/\.$/,"")}”`);
+  toast(`Saved “${val}”`);
   if(nx) setTimeout(()=>openWord(nx),250);
-  else { closeSheet(); setTimeout(()=>toast(blurryPending()?`Done! Page ${doc.blurry+1} still needs a new photo.`:"All words reviewed. Tap Finish when ready."),400); }
+  else { closeSheet(); setTimeout(()=>toast("All words reviewed. Tap Finish when ready."),400); }
 }
-
 function openEdit(t){
   const cur=edits[t.id]??t.text;
   openSheet(`Edit this word<small>I was confident here, but you can still fix it</small>`,
-    `${zoomHTML(t.id)}<label class="sr" for="editin">Word</label><input class="edit-in" id="editin" value="${esc(cur)}">`,
+    `<label class="sr" for="editin">Word</label><input class="edit-in" id="editin" value="${esc(cur)}">`,
     `<button class="btn ghost" id="ecancel">Cancel</button><button class="btn primary" id="esave">Save</button>`);
   setTimeout(()=>$("#editin").select(),330);
   $("#ecancel").onclick=closeSheet;
@@ -887,41 +698,27 @@ function openEdit(t){
 }
 
 /* ---------- Finish ---------- */
-function plain(){
-  return doc.pages.map((pg,p)=>{
-    const head=multi()?`— Page ${p+1} —\n`:"";
-    if(!readable(p)) return head+`[Not transcribed: photo too blurry]`;
-    let out="", cur=-1;
-    tokens.filter(t=>t.page===p).forEach(t=>{ if(t.line!==cur){ if(cur>=0) out+= pg.paras.includes(t.line)?"\n\n":"\n"; cur=t.line;} else out+=" "; out+=wordText(t); });
-    return head+out;
-  }).join("\n\n");
-}
-function plainTr(){
-  const tt=target(doc);
-  return doc.pages.map((_,p)=>(multi()?`— Page ${p+1} —\n`:"")+(readable(p)?tt.pages[p].replace(/\{(\w+)\}/g,(_,id)=>trFor(id)):"[Not translated: photo too blurry]")).join("\n\n");
-}
+function plain(){ return doc.text.map((_,p)=>tokens.filter(x=>x.para===p).map(wordText).join(" ")).join("\n\n"); }
+function plainTr(){ return tpl().replace(/\{(\w+)\}/g,(_,id)=>trFor(id)).split("\n").join("\n\n"); }
 function finish(){
   const c={kept:0,changed:0,typed:0}; order().forEach(id=>c[state[id].how]++);
-  const ne=Object.keys(edits).length, miss=blurryPending(), tt=target(doc);
+  const ne=Object.keys(edits).length, tt=needsTr(doc);
   $("#fin").innerHTML=`
     <div class="ok"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 12.5l4.5 4.5L19 7"/></svg></div>
     <h2>Nice work</h2>
-    <p class="sub">${doc.blurryPhoto?"Made from a blurry photo. Double-check amounts before you rely on it.":miss?`You checked every word I could read. Page ${doc.blurry+1} is still missing.`:"You checked every word I was unsure about."}</p>
-    ${miss?`<div class="skipcard" style="margin-bottom:16px"><b>Page ${doc.blurry+1} isn't included</b>The photo was too blurry. Retake it to add it to this transcription.<button class="btn primary" id="fin-retake">Retake page ${doc.blurry+1}</button></div>`:""}
+    <p class="sub">${doc.poor?doc.poor.done:"You checked every word I was unsure about."}</p>
     <div class="stats">
       <div><b>${c.kept}</b><small>AI guesses you confirmed</small></div>
       <div><b>${c.changed}</b><small>Times you picked another option</small></div>
       <div><b>${c.typed+ne}</b><small>Words you typed or fixed</small></div>
     </div>
-    <div class="card"><div class="hd"><b>${doc.lang} transcription</b><button data-copy="t">Copy</button></div><p lang="${doc.code}">${esc(plain())}</p></div>
+    <div class="card"><div class="hd"><b>${LANGS[doc.lang].name} transcription</b><button data-copy="t">Copy</button></div><p lang="${doc.lang}">${esc(plain())}</p></div>
     ${tt?`<div class="card"><div class="hd"><b>${LANGS[userLang].name} translation</b><button data-copy="tr">Copy</button></div><p lang="${userLang}">${esc(plainTr())}</p></div>`:""}
     <button class="btn soft" id="again" style="margin-bottom:10px">Keep editing</button>
     <button class="btn ghost" id="newdoc">Start a new document</button>`;
   $$("[data-copy]").forEach(b=>b.onclick=async()=>{
-    const txt=b.dataset.copy==="t"?plain():plainTr();
-    try{ await navigator.clipboard.writeText(txt); toast("Copied"); }catch(e){ toast("Couldn't copy. Select the text instead."); }
+    try{ await navigator.clipboard.writeText(b.dataset.copy==="t"?plain():plainTr()); toast("Copied"); }catch(e){ toast("Couldn't copy. Select the text instead."); }
   });
-  if(miss) $("#fin-retake").onclick=()=>retake(false);
   $("#again").onclick=()=>show("s-review"); $("#fin-back").onclick=()=>show("s-review");
   $("#newdoc").onclick=()=>show("s-home");
   show("s-fin");
